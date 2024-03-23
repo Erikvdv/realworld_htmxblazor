@@ -1,0 +1,22 @@
+using Carter;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using RealworldBlazorHtmx.App.ServiceClient;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddRazorComponents();
+builder.Services.AddCarter();
+builder.Services.Configure<ConduitClientSettings>(builder.Configuration.GetSection(nameof(ConduitClientSettings)));
+builder.Services.AddHttpClient<IConduitApiClient, ConduitApiClient>();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie();
+
+builder.Services.AddAuthorization();
+
+var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapCarter();
+app.UseStaticFiles();
+app.Run();

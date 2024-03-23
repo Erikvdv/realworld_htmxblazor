@@ -1,0 +1,24 @@
+﻿@inherits BaseComponent<App.Model>
+
+@if (Props.IsPartial)
+{
+    <AppHead Props="new AppHead.Model(Props.Title)"/>
+    @Props.Body
+}
+else
+{
+    <!DOCTYPE html>
+    <html lang="en">
+    <AppHead Props="new AppHead.Model(Props.Title)"/>
+    <body hx-ext="preload, json-enc">
+    @Props.Body
+</body>
+</html>
+}
+
+
+@code {
+
+    public record Model(RenderFragment Body, string Title, bool IsPartial) : BaseComponentProps;
+
+}

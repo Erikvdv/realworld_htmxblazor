@@ -1,0 +1,41 @@
+@using RealworldBlazorHtmx.App.ServiceClient
+<div class="article-preview" hx-boost="true">
+    <div class="article-meta">
+        <NavLink href=@($"/profile/{Article.Author.Username}")>
+            <img src="@Article.Author.Image" alt="@Article.Author.Username"/>
+        </NavLink>
+        <div class="info">
+            <a class="author" href="/profile/@Article.Author.Username">
+                @Article.Author.Username
+            </a>
+            <span class="date">
+                @Article.CreatedAt.ToString("MMMM d, yyyy")
+            </span>
+        </div>
+        <div class="pull-xs-right">
+            <button class="btn btn-sm @(Article.Favorited ? "btn-primary" : "btn-outline-primary")"
+                    onclick="(() =>
+                ToggleFavorite(@Article))">
+                <i class="ion-heart"></i> @Article.FavoritesCount
+            </button>
+        </div>
+    </div>
+    <a href=@($"/article/{Article.Slug}") preload class="preview-link">
+        <h1>@Article.Title</h1>
+        <p>@Article.Description</p>
+        <span>Read more...</span>
+        <ul class="tag-list">
+            @foreach (var tag in Article.TagList)
+            {
+                <li class="tag-default tag-pill tag-outline">@tag</li>
+            }
+        </ul>
+    </a>
+</div>
+
+
+@code {
+
+    [Parameter] public Article Article { get; set; }
+
+}

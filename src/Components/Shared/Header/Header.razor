@@ -1,0 +1,54 @@
+@inherits BaseComponent<Header.Model>
+
+@if (!Props.IsAuthenticated)
+{
+    <nav class="navbar navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">conduit</a>
+            <ul class="nav navbar-nav pull-xs-right" hx-boost="true">
+                <li class="nav-item">
+                    <a class="nav-link @IsActivePath("/")" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @IsActivePath("/login")" href="/login">Sign in</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @IsActivePath("/register")" href="/register">Sign up</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+}
+else
+{
+    <nav class="navbar navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">conduit</a>
+            <ul class="nav navbar-nav pull-xs-right">
+                <li class="nav-item">
+                    <a class="nav-link @IsActivePath("/")" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @IsActivePath("/editor")" href="/editor"> <i class="ion-compose"></i>&nbsp;New Article </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @IsActivePath("/settings")" href="/settings"> <i class="ion-gear-a"></i>&nbsp;Settings </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile/eric-simons">
+                        <img src="" class="user-pic"/>
+                        Eric Simons
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+}
+
+@code {
+
+    public record Model(bool IsAuthenticated, string activePath) : BaseComponentProps;
+
+    private string IsActivePath(string path) => Props.activePath == path ? "active" : "";
+
+}

@@ -1,0 +1,13 @@
+﻿@inherits BaseComponent<MainLayout.Model>
+
+<Header Props="@(new Header.Header.Model(Props.IsAuthenticated, Props.ActivePath))"></Header>
+
+@Props.Body
+
+<AppFooter/>
+
+@code {
+
+    public record Model(RenderFragment Body, bool IsAuthenticated, string ActivePath) : BaseComponentProps;
+
+}
