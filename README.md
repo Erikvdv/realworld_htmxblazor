@@ -8,6 +8,8 @@
 
 This codebase was created to demonstrate a frontend application built with **[Dotnet 8]** and **[HTMX]** using a minimal api approach with blazor components
 
+A live example can be found [here](https://blazorhtmx.azurewebsites.net/)
+
 We've gone to great lengths to adhere to the **[Dotnet 8]** community styleguides & best practices.
 
 For more information on how to this works with other frontends/backends, head over to the [RealWorld](https://github.com/gothinkster/realworld) repo.
