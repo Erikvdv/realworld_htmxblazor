@@ -1,0 +1,33 @@
+@inherits BaseComponent<Profile.Model>
+
+<div class="profile-page">
+    <div class="user-info">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-md-10 offset-md-1">
+                    <img src="@Props.Profile.Image" class="user-img" />
+                    <h4>@Props.Profile.Username</h4>
+                    <p>
+                        @Props.Profile.Bio
+                    </p>
+                    <button class="btn btn-sm btn-outline-secondary action-btn">
+                        <i class="ion-plus-round"></i>
+                        &nbsp; Follow @Props.Profile.Username
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-md-10 offset-md-1">
+                <Articles Props="new Articles.Model(Props.IsAuthenticated, Props.Filter)"></Articles>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    public record Model(bool IsAuthenticated, RealworldBlazorHtmx.App.ServiceClient.Profile Profile, ArticlesFilter Filter) : BaseComponentProps;
+}

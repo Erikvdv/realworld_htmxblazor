@@ -20,6 +20,8 @@ public class HomeRoutes : CarterModule
     {
         var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
         var bodyFragment = new Home().GetRenderFragment(new Home.Model(isAuthenticated, filter));
+        
+        
         return RenderHelper.RenderMainLayout(context, bodyFragment, "Home - Conduit");
     }
 
@@ -27,12 +29,14 @@ public class HomeRoutes : CarterModule
         IConduitApiClient client, [AsParameters] ArticlesFilter filter)
     {
         var articles = await client.GetArticleListAsync(new ArticlesQuery(null, null, null), null);
+        context.Response.Headers.CacheControl = $"max-age={TimeSpan.FromSeconds(60).TotalSeconds}";
         return new ArticleList().GetRazorComponentResult(new ArticleList.Model(articles, filter));
     }
     
     private static async Task<RazorComponentResult> GetTags(HttpContext context, IConduitApiClient client)
     {
         var tags = await client.GetTagListAsync();
+        context.Response.Headers.CacheControl = $"max-age={TimeSpan.FromSeconds(60).TotalSeconds}";
         return new Tags().GetRazorComponentResult(new Tags.Model(tags.ToList()));
     }
     

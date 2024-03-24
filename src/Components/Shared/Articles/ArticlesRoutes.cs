@@ -31,18 +31,15 @@ public class ArticlesRoutes : CarterModule
     private static async Task<RazorComponentResult> GetArticleList(HttpContext context, 
         IConduitApiClient client, [AsParameters] ArticlesFilter filter)
     {
-        var articles = await client.GetArticleListAsync(new ArticlesQuery(filter.Tag, null, null, 10, (filter.Page - 1) * 10), null);
+        var articles = await client.GetArticleListAsync(new ArticlesQuery(filter.Tag, filter.Author, filter.Favorited, 10, (filter.Page - 1) * 10), null);
+        var queryString = filter.ToQueryString();
 
-        var query = $"?page={filter.Page}";
-        if (filter.Tag is not null)
-        {
-            query += $"&tag={filter.Tag}";
-        }
         context.Response.Htmx(h =>
         {
-            h.ReplaceUrl(query);
+            h.ReplaceUrl(queryString);
         });
    
+        context.Response.Headers.CacheControl = $"max-age={TimeSpan.FromSeconds(60).TotalSeconds}";
         return new ArticleList().GetRazorComponentResult(new ArticleList.Model(articles, filter));
     }
     

@@ -9,7 +9,7 @@
                 <a href="/profile/@Props.Article.Author.Username"><img src="@Props.Article.Author.Image" /></a>
                 <div class="info">
                     <a href="/profile/@Props.Article.Author.Username" class="author">@Props.Article.Author.Username</a>
-                    <span class="date">@Props.Article.UpdatedAt</span>
+                    <span class="date">@Props.Article.UpdatedAt.ToString("MMMM d, yyyy")</span>
                 </div>
                 <button class="btn btn-sm btn-outline-secondary">
                     <i class="ion-plus-round"></i>

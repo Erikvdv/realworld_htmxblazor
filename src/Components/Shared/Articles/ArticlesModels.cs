@@ -7,7 +7,9 @@ public record ArticlesFilter(string? Tag, string? Author, string? Favorited, int
         var parameters = new Dictionary<string, string?>
         {
             { "page", Page.ToString() },
-            { "tag", Tag }
+            { "tag", Tag },
+            { "author", Author},
+            { "favorited", Favorited}
         };
         
         return "?" + string.Join("&", parameters.Where(p => !string.IsNullOrEmpty(p.Value)).Select(p => $"{p.Key}={p.Value}"));

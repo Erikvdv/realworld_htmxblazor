@@ -1,26 +1,38 @@
 @inherits BaseComponent<Articles.Model>
-<div hx-get="/articles"
-               hx-trigger="articles:feedchanged">
-    <div class="feed-toggle" 
+<div hx-boost="true">
+    <div class="articles-toggle" 
          id="feed-toggle"
          >
-        <ul class="nav nav-pills outline-active">
-            @if (Props is {IsAuthenticated: true})
-            {
-                <li class="nav-item">
-                    <a class="nav-link @NavItemClassActive("myFeed")" href="">Your Feed</a>
-                </li>
-            }
-            <li class="nav-item">
-                <a class="nav-link @NavItemClassActive("global")" href="/?page=1">Global Feed</a>
-            </li>
-            @if (Props.Filter.Tag != null)
-            {
-                <li class="nav-item">
-                    <a class="nav-link @NavItemClassActive("tag")">#@Props.Filter.Tag</a>
-                </li>
-            }
-        </ul>
+             <ul class="nav nav-pills outline-active">
+                 @if (Props.Filter.Author is not null || Props.Filter.Favorited is not null)
+                 {
+                     <li class="nav-item">
+                         <a class="nav-link @NavItemClassActive("myArticles")" href="/profile/@Props.Filter.Favorited">My Articles</a>
+                     </li>
+                     <li class="nav-item">
+                         <a class="nav-link @NavItemClassActive("favoritedArticles")" href="/profile/@Props.Filter.Author/favorites">Favorited Articles</a>
+                     </li>
+                 }
+                 else
+                 {
+                     @if (Props is {IsAuthenticated: true})
+                     {
+                         <li class="nav-item">
+                             <a class="nav-link @NavItemClassActive("myFeed")" href="">Your Feed</a>
+                         </li>
+                     }
+                     <li class="nav-item">
+                         <a class="nav-link @NavItemClassActive("global")" href="/?page=1">Global Feed</a>
+                     </li>
+                     @if (Props.Filter.Tag != null)
+                     {
+                         <li class="nav-item">
+                             <a class="nav-link @NavItemClassActive("tag")">#@Props.Filter.Tag</a>
+                         </li>
+                     }
+                 }
+
+             </ul>
     </div>
     <div id="articles"
          hx-get="/articles/list@(Props.Filter.ToQueryString())"
@@ -43,9 +55,22 @@
             "myFeed" => Props.Filter.MyFeed == true ? "active" : "",
             "tag" => Props.Filter.Tag != null ? "active" : "",
             "global" => Props.Filter.MyFeed != true && Props.Filter.Tag == null ? "active" : "",
+            "myArticles" => Props.Filter.Author is not null ? "active" : "",
+            "favoritedArticles" => Props.Filter.Favorited is not null ? "active" : "",
             _ => ""
         };
     }
+
+    // private bool ShowSection(string name)
+    // {
+    //     return item switch
+    //     {
+    //         "myFeed" => Props.Filter.MyFeed == true ? "active" : "",
+    //         "tag" => Props.Filter.Tag != null ? "active" : "",
+    //         "global" => Props.Filter.MyFeed != true && Props.Filter.Tag == null ? "active" : "",
+    //         _ => ""
+    //     };
+    // }
     
       
 }

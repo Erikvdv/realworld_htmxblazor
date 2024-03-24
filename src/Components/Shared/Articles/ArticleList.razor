@@ -1,10 +1,19 @@
 @inherits BaseComponent<ArticleList.Model>
 
-@foreach (var article in Props.ArticlesList.Articles)
+@if (Props.ArticlesList.ArticlesCount == 0)
 {
-    <ArticleSummary Article=article />
+    <div>No articles are here... yet.</div>
 }
-<ArticleListPagination Props="@(new ArticleListPagination.Model(Props.Filter.Page,GetTotalPages(), Props.Filter))" />
+else
+{
+    @foreach (var article in Props.ArticlesList.Articles)
+    {
+        <ArticleSummary Article=article />
+    }
+    <ArticleListPagination Props="@(new ArticleListPagination.Model(Props.Filter.Page,GetTotalPages(), Props.Filter))" />
+}
+
+
 
 @code {
     public record Model(ServiceClient.ArticleList ArticlesList, ArticlesFilter Filter) : BaseComponentProps;

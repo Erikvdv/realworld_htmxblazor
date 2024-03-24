@@ -19,6 +19,8 @@ public class ArticleRoutes : CarterModule
         var article = await client.GetArticleAsync(slug, default);
 
         var bodyFragment = new Article().GetRenderFragment(new Article.Model(isAuthenticated, article));
+        
+        context.Response.Headers.CacheControl = $"max-age={TimeSpan.FromSeconds(60).TotalSeconds}";
         return RenderHelper.RenderMainLayout(context, bodyFragment, "Home - Conduit");
     }
 
