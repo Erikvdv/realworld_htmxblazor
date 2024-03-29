@@ -41,10 +41,10 @@ public class ConduitApiClient : IConduitApiClient
         return HandleRequest<ArticleList>(httpRequest, cancellationToken);
     }
 
-    public Task<ArticleList> GetArticleFeedAsync(ArticleListFilter articleListFilter, string token,
+    public Task<ArticleList> GetArticleFeedAsync(ArticlesQuery articlesQuery, string token,
         CancellationToken cancellationToken = default)
     {
-        var querystring = GetQueryString(articleListFilter);
+        var querystring = GetQueryString(articlesQuery);
         var httpRequest =
             new HttpRequestMessage(HttpMethod.Get, new Uri($"api/articles/feed?{querystring}", UriKind.Relative));
         httpRequest.Headers
@@ -164,7 +164,7 @@ public class ConduitApiClient : IConduitApiClient
             Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
         };
         httpRequest.Headers.Add("Accept", "application/json");
-        
+
         var response = await HandleRequest<UserResponse>(httpRequest, cancellationToken);
         return response.User;
     }
@@ -225,10 +225,11 @@ public class ConduitApiClient : IConduitApiClient
 
         _logger.LogError(
             $"Error executing request to '{request.RequestUri}', HTTP {(int) response.StatusCode}: {responseBody}");
-        if (response.StatusCode == HttpStatusCode.UnprocessableEntity || response.StatusCode == HttpStatusCode.Forbidden)
+        if (response.StatusCode == HttpStatusCode.UnprocessableEntity ||
+            response.StatusCode == HttpStatusCode.Forbidden)
         {
             var errorResponse = JsonSerializer.Deserialize<ErrorResponse>(responseBody, _jsonSerializerOptions);
-            
+
             throw new ApiException(errorResponse.Errors);
         }
 

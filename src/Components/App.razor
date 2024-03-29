@@ -2,7 +2,6 @@
 
 @if (Props.IsPartial)
 {
-    <AppHead Props="new AppHead.Model(Props.Title)"/>
     @Props.Body
 }
 else
@@ -12,8 +11,8 @@ else
     <AppHead Props="new AppHead.Model(Props.Title)"/>
     <body hx-ext="preload, json-enc">
     @Props.Body
-</body>
-</html>
+    </body>
+    </html>
 }
 
 

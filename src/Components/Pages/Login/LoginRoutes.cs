@@ -1,8 +1,6 @@
 using Carter;
 using Htmx;
-using Microsoft.AspNetCore.Mvc;
 using MiniValidation;
-using RealworldBlazorHtmx.App.Components.Shared;
 using RealworldBlazorHtmx.App.Components.Shared.Services;
 using RealworldBlazorHtmx.App.ServiceClient;
 
@@ -14,8 +12,7 @@ public class LoginRoutes : CarterModule
     {
         var path = app.MapGroup("login");
         path.MapGet("/", GetLogin);
-        path.MapPost("/", SubmitLogin)
-            .DisableAntiforgery(); // todo: fix this later: https://andrewlock.net/exploring-the-dotnet-8-preview-form-binding-in-minimal-apis/
+        path.MapPost("/", SubmitLogin);
     }
 
     private static IResult GetLogin(HttpContext context)
@@ -23,12 +20,12 @@ public class LoginRoutes : CarterModule
         var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
         if (isAuthenticated)
             return Results.Redirect("/");
-        
-        var bodyFragment = RazorResult.GetComponentFragment<Login>(null);
+
+        var bodyFragment = new Login().GetRenderFragment(new Login.Model());
         return RenderHelper.RenderMainLayout(context, bodyFragment, "Sign-in - Conduit");
     }
 
-    private static async Task<IResult> SubmitLogin([FromForm] LoginFormInput input, IConduitApiClient client,
+    private static async Task<IResult> SubmitLogin(LoginFormInput input, IConduitApiClient client,
         HttpContext context)
     {
         Dictionary<string, string[]> errors = new();
@@ -41,7 +38,7 @@ public class LoginRoutes : CarterModule
             await AuthenticationHelper.LoginUser(context, user);
             context.Response.Htmx(h =>
             {
-                h.Redirect("/"); 
+                h.Redirect("/");
                 h.WithTrigger("UserLoggedIn");
             });
             return Results.Ok();

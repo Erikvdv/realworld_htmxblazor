@@ -5,15 +5,27 @@
         <div class="container">
             <div class="row">
                 <div class="col-xs-12 col-md-10 offset-md-1">
-                    <img src="@Props.Profile.Image" class="user-img" />
+                    <img src="@Props.Profile.Image" class="user-img"/>
                     <h4>@Props.Profile.Username</h4>
                     <p>
                         @Props.Profile.Bio
                     </p>
-                    <button class="btn btn-sm btn-outline-secondary action-btn">
-                        <i class="ion-plus-round"></i>
-                        &nbsp; Follow @Props.Profile.Username
-                    </button>
+                    @if (Props is {IsSelf: true})
+                    {
+                        <a href="/settings">
+                            <button class="btn btn-sm btn-outline-secondary action-btn">
+                                <i class="ion-gear-a"></i>
+                                &nbsp; Edit Profile Settings
+                            </button>
+                        </a>
+                    }
+                    else
+                    {
+                        <button class="btn btn-sm btn-outline-secondary action-btn">
+                            <i class="ion-plus-round"></i>
+                            &nbsp; Follow @Props.Profile.Username
+                        </button>
+                    }
                 </div>
             </div>
         </div>
@@ -29,5 +41,7 @@
 </div>
 
 @code {
-    public record Model(bool IsAuthenticated, RealworldBlazorHtmx.App.ServiceClient.Profile Profile, ArticlesFilter Filter) : BaseComponentProps;
+
+    public record Model(bool IsAuthenticated, ServiceClient.Profile Profile, ArticlesFilter Filter, bool IsSelf) : BaseComponentProps;
+
 }

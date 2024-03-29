@@ -4,7 +4,7 @@
     <ul class="pagination" hx-target="#articles">
         @for (var i = 1; i < Props.TotalPages + 1; i++)
         {
-            <li class="page-item @(i == Props.ActivePage ? "active" : "")" hx-get="/articles/list@(GetQuery(i))" >
+            <li class="page-item @(i == Props.ActivePage ? "active" : "")" hx-get="/articles/list@(GetQuery(i))">
                 <a class="page-link">@i</a>
             </li>
         }
@@ -12,13 +12,13 @@
 </nav>
 
 @code {
+
     public record Model(int ActivePage, int TotalPages, ArticlesFilter Filter) : BaseComponentProps;
 
     private string GetQuery(int pageNumber)
     {
-        var newFilter = Props.Filter with { Page = pageNumber };
+        var newFilter = Props.Filter with {Page = pageNumber};
         return newFilter.ToQueryString();
     }
-
-
+    
 }

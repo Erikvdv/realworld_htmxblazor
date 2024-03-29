@@ -1,9 +1,7 @@
 using Carter;
 using Htmx;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using MiniValidation;
-using RealworldBlazorHtmx.App.Components.Shared;
 using RealworldBlazorHtmx.App.Components.Shared.Services;
 using RealworldBlazorHtmx.App.ServiceClient;
 
@@ -15,7 +13,7 @@ public class RegisterRoutes : CarterModule
     {
         var path = app.MapGroup("register");
         path.MapGet("/", GetRegister);
-        path.MapPost("/", SubmitRegisterForm);//.DisableAntiforgery(); // todo fix antiforgery
+        path.MapPost("/", SubmitRegisterForm);
     }
 
     private static RazorComponentResult GetRegister(HttpContext context)
@@ -35,8 +33,8 @@ public class RegisterRoutes : CarterModule
             await AuthenticationHelper.LoginUser(context, user);
             context.Response.Htmx(h =>
             {
-                h.Redirect("/"); 
-                h.WithTrigger("UserLoggedIn"); 
+                h.Redirect("/");
+                h.WithTrigger("UserLoggedIn");
             });
             return Results.Ok();
         }

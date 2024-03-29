@@ -1,4 +1,5 @@
-@inherits BaseComponent<Header.Model>
+@using RealworldBlazorHtmx.App.ServiceClient
+@inherits BaseComponent<AppHeader.Model>
 
 @if (!Props.IsAuthenticated)
 {
@@ -29,15 +30,15 @@ else
                     <a class="nav-link @IsActivePath("/")" href="/">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @IsActivePath("/editor")" href="/editor"> <i class="ion-compose"></i>&nbsp;New Article </a>
+                    <a class="nav-link @IsActivePath("/editor")" href="/editor"> <i class="ion-compose"></i>New Article</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @IsActivePath("/settings")" href="/settings"> <i class="ion-gear-a"></i>&nbsp;Settings </a>
+                    <a class="nav-link @IsActivePath("/settings")" href="/settings"> <i class="ion-gear-a"></i>Settings</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/profile/eric-simons">
-                        <img src="" class="user-pic"/>
-                        Eric Simons
+                    <a class="nav-link" href="/profile/@Props.User.Username">
+                        <img src="@Props.User.Image" class="user-pic"/>
+                        @Props.User.Username
                     </a>
                 </li>
             </ul>
@@ -47,8 +48,11 @@ else
 
 @code {
 
-    public record Model(bool IsAuthenticated, string activePath) : BaseComponentProps;
+    public record Model(bool IsAuthenticated, string ActivePath, User? User) : BaseComponentProps;
 
-    private string IsActivePath(string path) => Props.activePath == path ? "active" : "";
+    private string IsActivePath(string path)
+    {
+        return Props.ActivePath == path ? "active" : "";
+    }
 
 }

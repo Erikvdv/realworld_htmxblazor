@@ -5,7 +5,7 @@ public interface IConduitApiClient
     Task<ArticleList> GetArticleListAsync(ArticlesQuery articlesQuery, string? token,
         CancellationToken cancellationToken = default);
 
-    Task<ArticleList> GetArticleFeedAsync(ArticleListFilter articleListFilter, string token,
+    Task<ArticleList> GetArticleFeedAsync(ArticlesQuery articleListFilter, string token,
         CancellationToken cancellationToken = default);
 
     Task<Article> GetArticleAsync(string slug, string? token, CancellationToken cancellationToken = default);
@@ -25,6 +25,6 @@ public interface IConduitApiClient
     Task<User> LoginWithTokenAsync(string token, CancellationToken cancellationToken = default);
     Task<User> GetUserAsync(string token, CancellationToken cancellationToken = default);
     Task<User> UpdateUserAsync(User user, string token, CancellationToken cancellationToken = default);
-    
+
     Task<User> RegisterUserAsync(NewUser user, CancellationToken cancellationToken = default);
 }

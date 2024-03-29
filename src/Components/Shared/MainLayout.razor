@@ -1,6 +1,7 @@
-﻿@inherits BaseComponent<MainLayout.Model>
+﻿@using RealworldBlazorHtmx.App.ServiceClient
+@inherits BaseComponent<MainLayout.Model>
 
-<Header Props="@(new Header.Header.Model(Props.IsAuthenticated, Props.ActivePath))"></Header>
+<AppHeader Props="@(new AppHeader.Model(Props.IsAuthenticated, Props.ActivePath, Props.User))"></AppHeader>
 
 @Props.Body
 
@@ -8,6 +9,6 @@
 
 @code {
 
-    public record Model(RenderFragment Body, bool IsAuthenticated, string ActivePath) : BaseComponentProps;
+    public record Model(RenderFragment Body, bool IsAuthenticated, string ActivePath, User? User = null) : BaseComponentProps;
 
 }

@@ -1,47 +1,51 @@
 @inherits BaseComponent<Articles.Model>
 <div hx-boost="true">
-    <div class="articles-toggle" 
-         id="feed-toggle"
-         >
-             <ul class="nav nav-pills outline-active">
-                 @if (Props.Filter.Author is not null || Props.Filter.Favorited is not null)
-                 {
-                     <li class="nav-item">
-                         <a class="nav-link @NavItemClassActive("myArticles")" href="/profile/@Props.Filter.Favorited">My Articles</a>
-                     </li>
-                     <li class="nav-item">
-                         <a class="nav-link @NavItemClassActive("favoritedArticles")" href="/profile/@Props.Filter.Author/favorites">Favorited Articles</a>
-                     </li>
-                 }
-                 else
-                 {
-                     @if (Props is {IsAuthenticated: true})
-                     {
-                         <li class="nav-item">
-                             <a class="nav-link @NavItemClassActive("myFeed")" href="">Your Feed</a>
-                         </li>
-                     }
-                     <li class="nav-item">
-                         <a class="nav-link @NavItemClassActive("global")" href="/?page=1">Global Feed</a>
-                     </li>
-                     @if (Props.Filter.Tag != null)
-                     {
-                         <li class="nav-item">
-                             <a class="nav-link @NavItemClassActive("tag")">#@Props.Filter.Tag</a>
-                         </li>
-                     }
-                 }
+    <div class="articles-toggle" id="feed-toggle">
+        <ul class="nav nav-pills outline-active">
+            @if (Props.Filter.Author is not null || Props.Filter.Favorited is not null)
+            {
+                <li class="nav-item">
+                    <a class="nav-link @NavItemClassActive("myArticles")" href="/profile/@Props.Filter.Favorited">My Articles</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @NavItemClassActive("favoritedArticles")" href="/profile/@Props.Filter.Author/favorites">Favorited Articles</a>
+                </li>
+            }
+            else
+            {
+                @if (Props is {IsAuthenticated: true})
+                {
+                    <li class="nav-item">
+                        <a class="nav-link @NavItemClassActive("myFeed")" href="/?page=1&myfeed=true">Your Feed</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @NavItemClassActive("global")" href="/?page=1&myfeed=false">Global Feed</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link @NavItemClassActive("global")" href="/?page=1">Global Feed</a>
+                    </li>
+                }
 
-             </ul>
+                @if (Props.Filter.Tag != null)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link @NavItemClassActive("tag")">#@Props.Filter.Tag</a>
+                    </li>
+                }
+            }
+
+        </ul>
     </div>
     <div id="articles"
          hx-get="/articles/list@(Props.Filter.ToQueryString())"
-         hx-trigger="load">Loading articles...
+         hx-trigger="load">
+        Loading articles...
     </div>
-    
+
 </div>
-
-
 
 
 @code {
@@ -71,6 +75,6 @@
     //         _ => ""
     //     };
     // }
-    
-      
+
+
 }

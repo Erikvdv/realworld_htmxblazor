@@ -33,7 +33,6 @@ public class User
 
 public record NewUser(string Username, string Email, string Password);
 
-
 public class Profile
 {
     public string Username { get; set; }
