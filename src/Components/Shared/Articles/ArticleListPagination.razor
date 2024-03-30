@@ -1,15 +1,19 @@
 @inherits BaseComponent<ArticleListPagination.Model>
 
-<nav id="articlelistpagination">
-    <ul class="pagination" hx-target="#articles">
-        @for (var i = 1; i < Props.TotalPages + 1; i++)
-        {
-            <li class="page-item @(i == Props.ActivePage ? "active" : "")" hx-get="/articles/list@(GetQuery(i))">
-                <a class="page-link">@i</a>
-            </li>
-        }
-    </ul>
-</nav>
+@if (Props.TotalPages > 1)
+{
+    <nav id="articlelistpagination">
+        <ul class="pagination" hx-target="#articles">
+            @for (var i = 1; i < Props.TotalPages + 1; i++)
+            {
+                <li class="page-item @(i == Props.ActivePage ? "active" : "")" hx-get="/articles/list@(GetQuery(i))">
+                    <a class="page-link">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
 
 @code {
 
