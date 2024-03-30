@@ -13,31 +13,31 @@ public enum FeedType
 
 public class Login
 {
-    [Required] public string Email { get; set; }
+    [Required] public required string Email { get; set; }
 
-    [Required] public string Password { get; set; }
+    [Required] public required string Password { get; set; }
 }
 
 public class User
 {
-    public string Bio { get; set; }
+    public required string Bio { get; set; }
     public DateTime CreatedAt { get; set; }
-    public string Email { get; set; }
+    public required string Email { get; set; }
     public int Id { get; set; }
-    public string Image { get; set; }
+    public required string Image { get; set; }
     public string? Password { get; set; }
-    public string Token { get; set; }
+    public required string Token { get; set; }
     public DateTime UpdatedAt { get; set; }
-    public string Username { get; set; }
+    public required string Username { get; set; }
 }
 
 public record NewUser(string Username, string Email, string Password);
 
 public class Profile
 {
-    public string Username { get; set; }
-    public string Bio { get; set; }
-    public string Image { get; set; }
+    public required string Username { get; set; }
+    public required string Bio { get; set; }
+    public required string Image { get; set; }
     public bool Following { get; set; }
 }
 
@@ -46,16 +46,16 @@ public class NewArticle
     public string Title { get; set; } = "";
     public string Description { get; set; } = "";
     public string Body { get; set; } = "";
-    public HashSet<string> TagList { get; set; } = new();
+    public HashSet<string> TagList { get; set; } = [];
 }
 
 public class Comment
 {
     public int Id { get; set; }
 
-    public string Body { get; set; }
+    public required string Body { get; set; }
 
-    public Profile Author { get; set; }
+    public required Profile Author { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
@@ -74,7 +74,7 @@ public class ArticleListFilter : ICloneable
     public object Clone()
     {
         var serialized = JsonSerializer.Serialize(this);
-        return JsonSerializer.Deserialize<ArticleListFilter>(serialized);
+        return JsonSerializer.Deserialize<ArticleListFilter>(serialized) ?? throw new InvalidOperationException();
     }
 }
 
@@ -87,28 +87,28 @@ public class ArticleList
 
 public class Article
 {
-    public string Slug { get; set; }
+    public required string Slug { get; set; }
 
-    public string Title { get; set; }
+    public required string Title { get; set; }
 
-    public string Description { get; set; }
+    public required string Description { get; set; }
 
-    public string Body { get; set; }
+    public required string Body { get; set; }
 
-    public string[] TagList { get; set; }
+    public required string[] TagList { get; set; }
 
     public bool Favorited { get; set; }
     public int FavoritesCount { get; set; }
-    public Profile Author { get; set; }
+    public required Profile Author { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
 }
 
-public class GetTagsResponse
+public class TagsResponse
 {
-    public string[]? Tags { get; set; }
+    public required string[] Tags { get; set; }
 }
 
 public class LoginRequest
@@ -118,12 +118,12 @@ public class LoginRequest
 
 public class LoginResponse
 {
-    public User? User { get; set; }
+    public required User User { get; set; }
 }
 
-public class ArticleObject
+public class ArticleResponse
 {
-    public Article? Article { get; set; }
+    public required Article Article { get; set; }
 }
 
 public class NewArticleRequest
@@ -131,19 +131,24 @@ public class NewArticleRequest
     public NewArticle? Article { get; set; }
 }
 
+public class CommentResponse
+{
+    public required Comment Comment { get; set; }
+}
+
 public class CommentsResponse
 {
-    public List<Comment>? Comments { get; set; }
+    public required List<Comment> Comments { get; set; }
 }
 
 public class ProfileResponse
 {
-    public Profile? Profile { get; set; }
+    public required Profile Profile { get; set; }
 }
 
 public class UserResponse
 {
-    public User? User { get; set; }
+    public required User User { get; set; }
 }
 
 public class UserUpdateRequest
@@ -153,7 +158,10 @@ public class UserUpdateRequest
 
 public record NewUserRequest(NewUser User);
 
+public record NewComment(string Body);
+public record NewCommentRequest(NewComment Comment);
+
 public class ErrorResponse
 {
-    public Dictionary<string, string[]>? Errors { get; set; }
+    public required Dictionary<string, string[]> Errors { get; set; }
 }

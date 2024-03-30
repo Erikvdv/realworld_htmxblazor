@@ -9,9 +9,11 @@ namespace RealworldBlazorHtmx.App.ServiceClient;
 public class ConduitApiClient : IConduitApiClient
 {
     private readonly HttpClient _httpClient;
-    private readonly JsonSerializerOptions _jsonSerializerOptions;
+
     private readonly ILogger<ConduitApiClient> _logger;
     private readonly ConduitClientSettings _settings;
+
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new() {PropertyNameCaseInsensitive = true};
 
     public ConduitApiClient(
         HttpClient httpClient,
@@ -27,6 +29,7 @@ public class ConduitApiClient : IConduitApiClient
             DictionaryKeyPolicy = JsonNamingPolicy.CamelCase
         };
         _httpClient.BaseAddress = new Uri(_settings.BaseAddress);
+        _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
     }
 
     public Task<ArticleList> GetArticleListAsync(ArticlesQuery articlesQuery, string? token,
@@ -58,10 +61,9 @@ public class ConduitApiClient : IConduitApiClient
         CancellationToken cancellationToken = default)
     {
         var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri($"api/articles/{slug}", UriKind.Relative));
-        httpRequest.Headers.Add("Accept", "application/json");
         if (token != null) httpRequest.Headers.Add("Authorization", $"Token {token}");
 
-        var response = await HandleRequest<ArticleObject>(httpRequest, cancellationToken);
+        var response = await HandleRequest<ArticleResponse>(httpRequest, cancellationToken);
         return response.Article;
     }
 
@@ -76,14 +78,14 @@ public class ConduitApiClient : IConduitApiClient
         };
         httpRequest.Headers.Add("Authorization", $"Token {token}");
 
-        var response = await HandleRequest<ArticleObject>(httpRequest, cancellationToken);
+        var response = await HandleRequest<ArticleResponse>(httpRequest, cancellationToken);
         return response.Article;
     }
 
     public async Task<Article> UpdateArticleAsync(Article article, string token,
         CancellationToken cancellationToken = default)
     {
-        var body = new ArticleObject {Article = article};
+        var body = new ArticleResponse {Article = article};
         var requestBody = JsonSerializer.Serialize(body, _jsonSerializerOptions);
         var httpRequest =
             new HttpRequestMessage(HttpMethod.Put, new Uri($"api/articles/{article.Slug}", UriKind.Relative))
@@ -92,7 +94,25 @@ public class ConduitApiClient : IConduitApiClient
             };
         httpRequest.Headers.Add("Authorization", $"Token {token}");
 
-        var response = await HandleRequest<ArticleObject>(httpRequest, cancellationToken);
+        var response = await HandleRequest<ArticleResponse>(httpRequest, cancellationToken);
+        return response.Article;
+    }
+
+    public async Task<Article> FavoriteArticleAsync(string slug, string token, CancellationToken cancellationToken = default)
+    {
+        var httpRequest = new HttpRequestMessage(HttpMethod.Post, new Uri($"api/articles/{slug}/favorite", UriKind.Relative));
+        httpRequest.Headers.Add("Authorization", $"Token {token}");
+
+        var response = await HandleRequest<ArticleResponse>(httpRequest, cancellationToken);
+        return response.Article;
+    }
+
+    public async Task<Article> UnfavoriteArticleAsync(string slug, string token, CancellationToken cancellationToken = default)
+    {
+        var httpRequest = new HttpRequestMessage(HttpMethod.Delete, new Uri($"api/articles/{slug}/favorite", UriKind.Relative));
+        httpRequest.Headers.Add("Authorization", $"Token {token}");
+
+        var response = await HandleRequest<ArticleResponse>(httpRequest, cancellationToken);
         return response.Article;
     }
 
@@ -101,19 +121,39 @@ public class ConduitApiClient : IConduitApiClient
     {
         var httpRequest =
             new HttpRequestMessage(HttpMethod.Get, new Uri($"api/articles/{slug}/comments", UriKind.Relative));
-        httpRequest.Headers.Add("Accept", "application/json");
         if (token != null) httpRequest.Headers.Add("Authorization", $"Token {token}");
 
         var response = await HandleRequest<CommentsResponse>(httpRequest, cancellationToken);
         return response.Comments;
     }
 
+    public async Task<Comment> AddCommentAsync(string slug, string comment, string token, CancellationToken cancellationToken = default)
+    {
+
+        var newCommentRequest = new NewCommentRequest(new NewComment(comment));
+        var requestBody = JsonSerializer.Serialize(newCommentRequest, _jsonSerializerOptions);
+        var httpRequest = new HttpRequestMessage(HttpMethod.Post, new Uri($"api/articles/{slug}/comments", UriKind.Relative))
+        {
+            Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
+        };
+        httpRequest.Headers.Add("Authorization", $"Token {token}");
+
+        var response = await HandleRequest<CommentResponse>(httpRequest, cancellationToken);
+        return response.Comment;
+    }
+
+    public async Task DeleteCommentAsync(string slug, int commentId, string token, CancellationToken cancellationToken = default)
+    {
+        var httpRequest = new HttpRequestMessage(HttpMethod.Delete, new Uri($"api/articles/{slug}/comments/{commentId}", UriKind.Relative));
+        httpRequest.Headers.Add("Authorization", $"Token {token}");
+        var response = await _httpClient.SendAsync(httpRequest, cancellationToken);
+    }
+
     public async Task<string[]> GetTagListAsync(CancellationToken cancellationToken = default)
     {
         var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri("api/tags", UriKind.Relative));
-        httpRequest.Headers.Add("Accept", "application/json");
-
-        var response = await HandleRequest<GetTagsResponse>(httpRequest, cancellationToken);
+        
+        var response = await HandleRequest<TagsResponse>(httpRequest, cancellationToken);
         return response.Tags;
     }
 
@@ -121,7 +161,6 @@ public class ConduitApiClient : IConduitApiClient
         CancellationToken cancellationToken = default)
     {
         var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri($"api/profiles/{username}", UriKind.Relative));
-        httpRequest.Headers.Add("Accept", "application/json");
         if (token != null) httpRequest.Headers.Add("Authorization", $"Token {token}");
 
         var response = await HandleRequest<ProfileResponse>(httpRequest, cancellationToken);
@@ -131,7 +170,6 @@ public class ConduitApiClient : IConduitApiClient
     public async Task<User> GetUserAsync(string token, CancellationToken cancellationToken = default)
     {
         var httpRequest = new HttpRequestMessage(HttpMethod.Get, new Uri("api/user", UriKind.Relative));
-        httpRequest.Headers.Add("Accept", "application/json");
         httpRequest.Headers.Add("Authorization", $"Token {token}");
 
 
@@ -147,7 +185,7 @@ public class ConduitApiClient : IConduitApiClient
         {
             Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
         };
-        httpRequest.Headers.Add("Accept", "application/json");
+
         httpRequest.Headers.Add("Authorization", $"Token {token}");
 
 
@@ -163,31 +201,30 @@ public class ConduitApiClient : IConduitApiClient
         {
             Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
         };
-        httpRequest.Headers.Add("Accept", "application/json");
 
         var response = await HandleRequest<UserResponse>(httpRequest, cancellationToken);
         return response.User;
     }
 
-    public async Task<Profile> FollowProfileAsync(string username, string? token,
+    public async Task<Profile> FollowProfileAsync(string username, string token,
         CancellationToken cancellationToken = default)
     {
         var httpRequest =
             new HttpRequestMessage(HttpMethod.Post, new Uri($"api/profiles/{username}/follow", UriKind.Relative));
-        httpRequest.Headers.Add("Accept", "application/json");
-        if (token != null) httpRequest.Headers.Add("Authorization", $"Token {token}");
+
+        httpRequest.Headers.Add("Authorization", $"Token {token}");
 
         var response = await HandleRequest<ProfileResponse>(httpRequest, cancellationToken);
         return response.Profile;
     }
 
-    public async Task<Profile> UnFollowProfileAsync(string username, string? token,
+    public async Task<Profile> UnFollowProfileAsync(string username, string token,
         CancellationToken cancellationToken = default)
     {
         var httpRequest = new HttpRequestMessage(HttpMethod.Delete,
             new Uri($"api/profiles/{username}/follow", UriKind.Relative));
-        httpRequest.Headers.Add("Accept", "application/json");
-        if (token != null) httpRequest.Headers.Add("Authorization", $"Token {token}");
+
+        httpRequest.Headers.Add("Authorization", $"Token {token}");
 
         var response = await HandleRequest<ProfileResponse>(httpRequest, cancellationToken);
         return response.Profile;
@@ -220,11 +257,9 @@ public class ConduitApiClient : IConduitApiClient
         var responseBody = await GetResponseBody(response);
 
         if (response.IsSuccessStatusCode)
-            return JsonSerializer.Deserialize<T>(responseBody,
-                new JsonSerializerOptions {PropertyNameCaseInsensitive = true});
+            return JsonSerializer.Deserialize<T>(responseBody, _jsonSerializerOptions) ?? throw new InvalidOperationException();
 
-        _logger.LogError(
-            $"Error executing request to '{request.RequestUri}', HTTP {(int) response.StatusCode}: {responseBody}");
+        _logger.LogError("Error executing request to \'{RequestRequestUri}\', HTTP {ResponseStatusCode}: {ResponseBody}", request.RequestUri, (int) response.StatusCode, responseBody);
         if (response.StatusCode == HttpStatusCode.UnprocessableEntity ||
             response.StatusCode == HttpStatusCode.Forbidden)
         {
@@ -240,10 +275,10 @@ public class ConduitApiClient : IConduitApiClient
 
     private static async Task<string> GetResponseBody(HttpResponseMessage response)
     {
-        return response.Content != null ? await response.Content.ReadAsStringAsync() : string.Empty;
+        return await response.Content.ReadAsStringAsync();
     }
 
-    public string GetQueryString(object obj)
+    private static string GetQueryString(object obj)
     {
         var properties = from p in obj.GetType().GetProperties()
             where p.GetValue(obj, null) != null

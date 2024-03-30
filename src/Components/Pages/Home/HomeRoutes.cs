@@ -37,7 +37,6 @@ public class HomeRoutes : CarterModule
         IConduitApiClient client, [AsParameters] ArticlesFilter filter)
     {
         var articles = await client.GetArticleListAsync(new ArticlesQuery(null, null, null), null);
-        context.Response.Headers.CacheControl = $"max-age={TimeSpan.FromSeconds(60).TotalSeconds}";
         return new ArticleList().GetRazorComponentResult(new ArticleList.Model(articles, filter));
     }
 

@@ -25,7 +25,14 @@ public class HeaderTests
     [Fact]
     public async Task RendersCorrectlyWhenAuthenticated()
     {
-        var user = new User {Username = "Erik van de Ven", Image = "/evdv.png"};
+        var user = new User
+        {
+            Username = "Erik van de Ven",
+            Image = "/evdv.png",
+            Bio = "",
+            Email = "",
+            Token = ""
+        };
         var model = new AppHeader.Model(true, "/", user);
 
         var html = await _renderer.RenderComponent<AppHeader>(model);

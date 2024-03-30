@@ -1,3 +1,4 @@
+@using RealworldBlazorHtmx.App.Components.Shared
 @inherits BaseComponent<LoginForm.Model>
 
 <form hx-post="/login" hx-include="[name='Email'],[name='Password']">

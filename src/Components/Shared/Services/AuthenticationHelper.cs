@@ -30,7 +30,9 @@ public static class AuthenticationHelper
         {
             Token = token,
             Image = image,
-            Username = username
+            Username = username,
+            Bio = "",
+            Email = ""
         };
     }
 }

@@ -23,7 +23,7 @@ public class ArticlesRoutes : CarterModule
         if (isAuthenticated) user = AuthenticationHelper.GetUser(context);
 
         ServiceClient.ArticleList? articles;
-        if (filter.MyFeed == true)
+        if (filter.MyFeed == true && user is not null)
             articles = await client.GetArticleFeedAsync(
                 new ArticlesQuery(filter.Tag, filter.Author, filter.Favorited, 10, (filter.Page - 1) * 10), user.Token);
         else
@@ -36,6 +36,7 @@ public class ArticlesRoutes : CarterModule
         context.Response.Htmx(h => { h.ReplaceUrl(queryString); });
 
         context.Response.Headers.CacheControl = $"max-age={TimeSpan.FromSeconds(60).TotalSeconds}";
+        
         return new ArticleList().GetRazorComponentResult(new ArticleList.Model(articles, filter));
     }
 }
