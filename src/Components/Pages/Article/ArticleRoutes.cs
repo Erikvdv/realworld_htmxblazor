@@ -12,6 +12,7 @@ public class ArticleRoutes : CarterModule
     {
         var path = app.MapGroup("article");
         path.MapGet("/{slug}", GetArticle);
+        path.MapDelete("/{slug}", DeleteArticle);
         path.MapPost("/{slug}/favorite", FavoriteArticle);
         path.MapDelete("/{slug}/favorite", UnFavoriteArticle);
         path.MapGet("/{slug}/comments", GetComments);
@@ -35,6 +36,23 @@ public class ArticleRoutes : CarterModule
         var bodyFragment = new Article().GetRenderFragment(new Article.Model(isAuthenticated, article, user));
         
         return RenderHelper.RenderMainLayout(context, bodyFragment, "Home - Conduit", user);
+    }
+    
+    private static async Task<IResult> DeleteArticle(HttpContext context, string slug,
+        IConduitApiClient client)
+    {
+        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
+        User? user = null;
+
+        if (isAuthenticated) user = AuthenticationHelper.GetUser(context);
+
+        await client.DeleteArticleAsync(slug, user?.Token);
+
+        context.Response.Htmx(h =>
+        {
+            h.Redirect("/");
+        });
+        return Results.Ok();
     }
     
     private static async Task<IResult> FavoriteArticle(HttpContext context, string slug,

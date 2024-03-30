@@ -41,8 +41,6 @@ public class ArticlesRoutes : CarterModule
         var queryString = filter.ToQueryString();
 
         context.Response.Htmx(h => { h.ReplaceUrl(queryString); });
-
-        context.Response.Headers.CacheControl = $"max-age={TimeSpan.FromSeconds(60).TotalSeconds}";
         
         return new ArticleList().GetRazorComponentResult(new ArticleList.Model(articles, filter));
     }

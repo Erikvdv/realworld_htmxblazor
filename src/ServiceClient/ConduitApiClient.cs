@@ -82,13 +82,13 @@ public class ConduitApiClient : IConduitApiClient
         return response.Article;
     }
 
-    public async Task<Article> UpdateArticleAsync(Article article, string token,
+    public async Task<Article> UpdateArticleAsync(string slug, UpdateArticle article, string token,
         CancellationToken cancellationToken = default)
     {
-        var body = new ArticleResponse {Article = article};
+        var body = new UpdateArticleResponse {Article = article};
         var requestBody = JsonSerializer.Serialize(body, _jsonSerializerOptions);
         var httpRequest =
-            new HttpRequestMessage(HttpMethod.Put, new Uri($"api/articles/{article.Slug}", UriKind.Relative))
+            new HttpRequestMessage(HttpMethod.Put, new Uri($"api/articles/{slug}", UriKind.Relative))
             {
                 Content = new StringContent(requestBody, Encoding.UTF8, "application/json")
             };
@@ -96,6 +96,13 @@ public class ConduitApiClient : IConduitApiClient
 
         var response = await HandleRequest<ArticleResponse>(httpRequest, cancellationToken);
         return response.Article;
+    }
+
+    public async Task DeleteArticleAsync(string slug, string? token, CancellationToken cancellationToken = default)
+    {
+        var httpRequest = new HttpRequestMessage(HttpMethod.Delete, new Uri($"api/articles/{slug}", UriKind.Relative));
+        httpRequest.Headers.Add("Authorization", $"Token {token}");
+        var response = await _httpClient.SendAsync(httpRequest, cancellationToken);
     }
 
     public async Task<Article> FavoriteArticleAsync(string slug, string token, CancellationToken cancellationToken = default)

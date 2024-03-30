@@ -106,6 +106,8 @@ public class Article
     public DateTime UpdatedAt { get; set; }
 }
 
+public record UpdateArticle(string Title, string Description, string Body, List<string> TagList);
+
 public class TagsResponse
 {
     public required string[] Tags { get; set; }
@@ -124,6 +126,11 @@ public class LoginResponse
 public class ArticleResponse
 {
     public required Article Article { get; set; }
+}
+
+public class UpdateArticleResponse
+{
+    public required UpdateArticle Article { get; set; }
 }
 
 public class NewArticleRequest

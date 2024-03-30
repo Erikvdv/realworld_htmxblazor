@@ -15,13 +15,16 @@
                     <span class="date">@Props.Article.UpdatedAt.ToString("MMMM d, yyyy")</span>
                 </div>
                 @if (Props.User is not null && Props.User.Username == Props.Article.Author.Username)
-                {
-                    <button class="btn btn-sm btn-outline-secondary">
-                        <i class="ion-edit"></i> Edit Article
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger">
+                { 
+                    <a hx-boost="true" href="/editor/@Props.Article.Slug">
+                        <button class="btn btn-sm btn-outline-secondary">
+                            <i class="ion-edit"></i> Edit Article
+                        </button>
+                    </a>
+                    <button class="btn btn-sm btn-outline-danger" hx-delete="/article/@Props.Article.Slug">
                         <i class="ion-trash-a"></i> Delete Article
                     </button>
+                   
                 }
                 else
                 {

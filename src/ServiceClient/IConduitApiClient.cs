@@ -10,7 +10,8 @@ public interface IConduitApiClient
 
     Task<Article> GetArticleAsync(string slug, string? token, CancellationToken cancellationToken = default);
     Task<Article> CreateArticleAsync(NewArticle article, string token, CancellationToken cancellationToken = default);
-    Task<Article> UpdateArticleAsync(Article article, string token, CancellationToken cancellationToken = default);
+    Task<Article> UpdateArticleAsync(string slug, UpdateArticle article, string token, CancellationToken cancellationToken = default);
+    Task DeleteArticleAsync(string slug, string? token, CancellationToken cancellationToken = default);
     
     Task<Article> FavoriteArticleAsync(string slug, string token, CancellationToken cancellationToken = default);
     Task<Article> UnfavoriteArticleAsync(string slug, string token, CancellationToken cancellationToken = default);
