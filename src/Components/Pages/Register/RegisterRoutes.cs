@@ -16,8 +16,11 @@ public class RegisterRoutes : CarterModule
         path.MapPost("/", SubmitRegisterForm);
     }
 
-    private static RazorComponentResult GetRegister(HttpContext context)
+    private static IResult GetRegister(HttpContext context)
     {
+        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
+        if (isAuthenticated)
+            return Results.Redirect("/");
         var bodyFragment = new Register().GetRenderFragment(new Register.Model());
         return RenderHelper.RenderMainLayout(context, bodyFragment, "Register - Conduit");
     }

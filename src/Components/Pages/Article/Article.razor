@@ -7,11 +7,11 @@
             <h1>@Props.Article.Title</h1>
 
             <div class="article-meta">
-                <a href="/profile/@Props.Article.Author.Username">
+                <a href="/profile/?author=@Props.Article.Author.Username">
                     <img src="@Props.Article.Author.Image"/>
                 </a>
                 <div class="info">
-                    <a href="/profile/@Props.Article.Author.Username" class="author">@Props.Article.Author.Username</a>
+                    <a href="/profile/?author=@Props.Article.Author.Username" class="author">@Props.Article.Author.Username</a>
                     <span class="date">@Props.Article.UpdatedAt.ToString("MMMM d, yyyy")</span>
                 </div>
                 @if (Props.User is not null && Props.User.Username == Props.Article.Author.Username)

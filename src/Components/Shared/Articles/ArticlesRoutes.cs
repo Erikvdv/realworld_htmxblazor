@@ -24,12 +24,19 @@ public class ArticlesRoutes : CarterModule
 
         ServiceClient.ArticleList? articles;
         if (filter.MyFeed == true && user is not null)
+        {
             articles = await client.GetArticleFeedAsync(
                 new ArticlesQuery(filter.Tag, filter.Author, filter.Favorited, 10, (filter.Page - 1) * 10), user.Token);
+
+        }
         else
+        {
+            var articlesPerPage = (filter.Author is not null || filter.Favorited is not null) ? 5 : 10;
             articles = await client.GetArticleListAsync(
-                new ArticlesQuery(filter.Tag, filter.Author, filter.Favorited, 10, (filter.Page - 1) * 10),
+                new ArticlesQuery(filter.Tag, filter.Author, filter.Favorited, articlesPerPage, (filter.Page - 1) * articlesPerPage),
                 user?.Token);
+        }
+        
 
         var queryString = filter.ToQueryString();
 

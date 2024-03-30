@@ -36,7 +36,7 @@ else
                     <a class="nav-link @IsActivePath("/settings")" href="/settings"> <i class="ion-gear-a"></i>Settings</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/profile/@Props.User?.Username">
+                    <a class="nav-link" href="/profile/?author=@Props.User?.Username">
                         <img src="@Props.User?.Image" class="user-pic"/>
                         @Props.User?.Username
                     </a>

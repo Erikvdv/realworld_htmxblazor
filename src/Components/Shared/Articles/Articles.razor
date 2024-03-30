@@ -5,10 +5,10 @@
             @if (Props.Filter.Author is not null || Props.Filter.Favorited is not null)
             {
                 <li class="nav-item">
-                    <a class="nav-link @NavItemClassActive("myArticles")" href="/profile/@Props.Filter.Favorited">My Articles</a>
+                    <a class="nav-link @NavItemClassActive("myArticles")" href="/profile/?author=@Props.Filter.Favorited">My Articles</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @NavItemClassActive("favoritedArticles")" href="/profile/@Props.Filter.Author/favorites">Favorited Articles</a>
+                    <a class="nav-link @NavItemClassActive("favoritedArticles")" href="/profile/?favorited=@Props.Filter.Author">Favorited Articles</a>
                 </li>
             }
             else
@@ -64,17 +64,5 @@
             _ => ""
         };
     }
-
-    // private bool ShowSection(string name)
-    // {
-    //     return item switch
-    //     {
-    //         "myFeed" => Props.Filter.MyFeed == true ? "active" : "",
-    //         "tag" => Props.Filter.Tag != null ? "active" : "",
-    //         "global" => Props.Filter.MyFeed != true && Props.Filter.Tag == null ? "active" : "",
-    //         _ => ""
-    //     };
-    // }
-
 
 }

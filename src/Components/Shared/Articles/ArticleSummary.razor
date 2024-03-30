@@ -1,11 +1,11 @@
 @using RealworldBlazorHtmx.App.ServiceClient
 <div class="article-preview" hx-boost="true">
     <div class="article-meta">
-        <NavLink href=@($"/profile/{Article.Author.Username}")>
+        <NavLink href=@($"/profile/?author={Article.Author.Username}")>
             <img src="@Article.Author.Image" alt="@Article.Author.Username"/>
         </NavLink>
         <div class="info">
-            <a class="author" href="/profile/@Article.Author.Username">
+            <a class="author" href="/profile/?author=@Article.Author.Username">
                 @Article.Author.Username
             </a>
             <span class="date">

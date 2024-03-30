@@ -21,10 +21,7 @@
                     }
                     else
                     {
-                        <button class="btn btn-sm btn-outline-secondary action-btn">
-                            <i class="ion-plus-round"></i>
-                            &nbsp; Follow @Props.Profile.Username
-                        </button>
+                    <ProfileFollowing Props="@(new ProfileFollowing.Model(Props.Profile))"></ProfileFollowing>
                     }
                 </div>
             </div>

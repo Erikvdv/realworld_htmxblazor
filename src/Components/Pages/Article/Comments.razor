@@ -19,11 +19,11 @@
             </p>
         </div>
         <div class="card-footer">
-            <a href="/profile/author" class="comment-author">
+            <a href="/profile/?author=@comment.Author" class="comment-author">
                 <img src="@comment.Author.Image" class="comment-author-img"/>
             </a>
             &nbsp;
-            <a href="/profile/jacob-schmidt" class="comment-author">@comment.Author.Username</a>
+            <a href="/profile/?author=@comment.Author.Username" class="comment-author">@comment.Author.Username</a>
             <span class="date-posted">@comment.UpdatedAt</span>
             @if (comment.Author.Username == Props.User.Username)
             {
