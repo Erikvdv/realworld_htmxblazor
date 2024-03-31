@@ -1,0 +1,18 @@
+@inherits BaseComponent<Tags.Model>
+
+<div class="sidebar">
+    <p>Popular Tags</p>
+
+    <div class="tag-list" id="taglist" hx-boost="true">
+        @foreach (var tag in Props.Tags)
+        {
+            <a class="tag-default tag-pill" href="?page=1&tag=@tag">@tag</a>
+        }
+    </div>
+</div>
+
+@code {
+
+    public record Model(List<string> Tags) : BaseComponentProps;
+
+}

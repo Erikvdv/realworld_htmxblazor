@@ -1,0 +1,31 @@
+@inherits BaseComponent<Home.Model>
+
+<div class="home-page">
+    @if (!Props.IsAuthenticated)
+    {
+        <div class="banner">
+            <div class="container">
+                <h1 class="logo-font">conduit</h1>
+                <p>A place to share your knowledge.</p>
+            </div>
+        </div>
+    }
+
+    <div class="container page">
+        <div class="row">
+            <div class="col-md-9">
+                <Articles Props="new Articles.Model(Props.IsAuthenticated, Props.Filter)"></Articles>
+            </div>
+
+            <div class="col-md-3">
+                <div class="sidebar" hx-get="/home/tags" hx-trigger="load">Loading tags...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    public record Model(bool IsAuthenticated, ArticlesFilter Filter) : BaseComponentProps;
+
+}

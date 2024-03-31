@@ -1,0 +1,45 @@
+@using RealworldBlazorHtmx.App.ServiceClient
+@inherits BaseComponent<Comments.Model>
+
+<form class="card comment-form" hx-post="/article/@Props.ArticleSlug/comments" hx-include="[name='comment']" hx-target="#commentlist">
+    <div class="card-block">
+        <textarea class="form-control" placeholder="Write a comment..." rows="3" name="comment"></textarea>
+    </div>
+    <div class="card-footer">
+        <img src="@Props.User.Image" class="comment-author-img"/>
+        <button class="btn btn-sm btn-primary">Post Comment</button>
+    </div>
+</form>
+@foreach (var comment in Props.Comments)
+{
+    <div class="card">
+        <div class="card-block">
+            <p class="card-text">
+                @comment.Body
+            </p>
+        </div>
+        <div class="card-footer">
+            <a href="/profile/?author=@comment.Author" class="comment-author">
+                <img src="@comment.Author.Image" class="comment-author-img"/>
+            </a>
+            &nbsp;
+            <a href="/profile/?author=@comment.Author.Username" class="comment-author">@comment.Author.Username</a>
+            <span class="date-posted">@comment.UpdatedAt</span>
+            @if (comment.Author.Username == Props.User.Username)
+            {
+                <span class="mod-options">
+                    <i class="ion-trash-a" hx-delete="/article/@Props.ArticleSlug/comments/@comment.Id" hx-target="#commentlist"></i>
+                </span>
+            }
+            
+        </div>
+    </div>
+}
+
+
+
+@code {
+
+    public record Model(string ArticleSlug, List<Comment> Comments, User User) : BaseComponentProps;
+
+}

@@ -1,0 +1,7 @@
+a:active {
+    color: green !important;
+}
+
+.navbar-light .navbar-nav a.nav-link:active {
+    color: green;
+}

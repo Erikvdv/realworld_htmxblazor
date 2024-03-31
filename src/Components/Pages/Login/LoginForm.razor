@@ -1,0 +1,20 @@
+@using RealworldBlazorHtmx.App.Components.Shared
+@inherits BaseComponent<LoginForm.Model>
+
+<form hx-post="/login" hx-include="[name='Email'],[name='Password']">
+    <ListErrors ErrorList="Props?.ErrorList"/>
+    <fieldset class="form-group">
+        <input class="form-control form-control-lg" type="text" placeholder="Email" name="Email"/>
+    </fieldset>
+    <fieldset class="form-group">
+        <input class="form-control form-control-lg" type="password" placeholder="Password" name="Password"/>
+    </fieldset>
+    <button class="btn btn-lg btn-primary pull-xs-right">Sign in</button>
+</form>
+
+@code {
+
+    public record Model(Dictionary<string, string[]>? ErrorList) : BaseComponentProps;
+
+
+}

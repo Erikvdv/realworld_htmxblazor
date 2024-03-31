@@ -1,0 +1,18 @@
+@if (ErrorList != null)
+{
+    <ul class="error-messages">
+        @foreach (var error in ErrorList)
+        {
+            <li>
+                @error.Key @string.Join(" ", error.Value)
+            </li>
+        }
+    </ul>
+}
+
+
+@code {
+
+    [Parameter] public Dictionary<string, string[]>? ErrorList { get; set; }
+
+}
