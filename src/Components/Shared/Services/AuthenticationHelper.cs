@@ -20,6 +20,11 @@ public static class AuthenticationHelper
         await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(claimsIdentity), authProperties);
     }
+    
+    public static async Task Logout(HttpContext context)
+    {
+        await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    }
 
     public static User GetUser(HttpContext context)
     {
