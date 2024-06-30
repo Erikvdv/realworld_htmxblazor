@@ -16,7 +16,7 @@
                 </div>
                 @if (Props.User is not null && Props.User.Username == Props.Article.Author.Username)
                 { 
-                    <a hx-boost="true" href="/editor/@Props.Article.Slug">
+                    <a href="/editor/@Props.Article.Slug">
                         <button class="btn btn-sm btn-outline-secondary">
                             <i class="ion-edit"></i> Edit Article
                         </button>
