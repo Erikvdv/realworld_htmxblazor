@@ -15,8 +15,8 @@ public static class RenderHelper
         var layoutFragment = new MainLayout()
             .GetRenderFragment(new MainLayout.Model(bodyFragment, isAuthenticated, context.Request.Path, user));
 
-        var isPartial = context.Request.IsHtmx();
-        var props = new App.Model(layoutFragment, pageTitle, isPartial);
+
+        var props = new App.Model(layoutFragment, pageTitle);
 
         return new App().GetRazorComponentResult(props);
     }
