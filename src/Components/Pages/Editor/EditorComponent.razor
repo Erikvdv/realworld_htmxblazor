@@ -1,21 +1,22 @@
 @using RealworldBlazorHtmx.App.Components.Shared
 @using RealworldBlazorHtmx.App.ServiceClient
-@inherits BaseComponent<Editor.Model>
+
+@inherits BaseComponent<EditorComponent.Input>
 
 <div class="editor-page" id="editorPage">
     <div class="container page">
         <div class="row">
             <div class="col-md-10 offset-md-1 col-xs-12">
-                <ListErrors ErrorList="Props.ErrorList"/>
+                <ListErrors ErrorList="Data.ErrorList"/>
 
                 <form>
                     <fieldset>
                         <fieldset class="form-group">
-                            <input type="hidden" name="slug" value="@Props.Slug"/>
-                            <input type="text" class="form-control form-control-lg" placeholder="Article Title" name="title" value="@Props.Article.Title"/>
+                            <input type="hidden" name="slug" value="@Data.Slug"/>
+                            <input type="text" class="form-control form-control-lg" placeholder="Article Title" name="title" value="@Data.Article.Title"/>
                         </fieldset>
                         <fieldset class="form-group">
-                            <input type="text" class="form-control" placeholder="What's this article about?" name="description" value="@Props.Article.Description"/>
+                            <input type="text" class="form-control" placeholder="What's this article about?" name="description" value="@Data.Article.Description"/>
                         </fieldset>
                         <fieldset class="form-group">
                             <textarea
@@ -23,10 +24,10 @@
                   rows="8"
                   placeholder="Write your article (in markdown)"
                   name="body"
-                  value="@Props.Article.Body"
+                  value="@Data.Article.Body"
               ></textarea>
                         </fieldset>
-                        <EditorTags Props="new EditorTags.Model(Props.Article.TagList)"></EditorTags>
+                        <EditorTagsComponent Data="new EditorTagsComponent.Input(Data.Article.TagList)"></EditorTagsComponent>
                         
                     </fieldset>
                     <button class="btn btn-lg pull-xs-right btn-primary" type="button" hx-post="/editor/article" hx-params="slug,title,description,body,tags" hx-target="#editorPage">
@@ -40,6 +41,6 @@
 
 @code {
 
-    public record Model(UpdateArticle Article, string? Slug, Dictionary<string, string[]>? ErrorList) : BaseComponentProps;
+    public record Input(UpdateArticle Article, string? Slug, Dictionary<string, string[]>? ErrorList);
 
 }

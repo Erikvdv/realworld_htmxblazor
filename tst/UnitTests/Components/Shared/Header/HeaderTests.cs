@@ -12,12 +12,12 @@ public class HeaderTests
     [Fact]
     public async Task RendersCorrectlyWhenNotAuthenticated()
     {
-        var model = new AppHeader.Model(false, "/", null);
-        var html = await _renderer.RenderComponent<AppHeader>(model);
+        var model = new AppHeaderComponent.Input(false, "/", null);
+        var html = await _renderer.RenderComponent<AppHeaderComponent>(model);
         var document = await BrowsingContext.New(Configuration.Default).OpenAsync(req => req.Content(html));
         var listItems = document.QuerySelectorAll("li");
 
-        listItems[0].TextContent.Should().Be("Home");
+        listItems[0].TextContent.Should().Be("HomeComponent");
         listItems[1].TextContent.Should().Be("Sign in");
         listItems[2].TextContent.Should().Be("Sign up");
     }
@@ -33,16 +33,16 @@ public class HeaderTests
             Email = "",
             Token = ""
         };
-        var model = new AppHeader.Model(true, "/", user);
+        var model = new AppHeaderComponent.Input(true, "/", user);
 
-        var html = await _renderer.RenderComponent<AppHeader>(model);
+        var html = await _renderer.RenderComponent<AppHeaderComponent>(model);
         var document = await BrowsingContext.New(Configuration.Default).OpenAsync(req => req.Content(html));
 
         var listItems = document.QuerySelectorAll("li");
 
-        listItems[0].TextContent.Should().Be("Home");
+        listItems[0].TextContent.Should().Be("HomeComponent");
         listItems[1].TextContent.Should().Be("New Article");
-        listItems[2].TextContent.Should().Be("Settings");
+        listItems[2].TextContent.Should().Be("SettingsComponent");
         listItems[3].TextContent.Trim().Should().Be(user.Username);
     }
 }

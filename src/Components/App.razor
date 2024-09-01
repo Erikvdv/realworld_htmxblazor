@@ -1,18 +1,19 @@
-﻿@inherits BaseComponent<App.Model>
+﻿@inherits BaseComponent<App.Input>
 
 
 <!DOCTYPE html>
 <html lang="en">
-<AppHead Props="new AppHead.Model(Props.Title)"/>
-<body hx-ext="preload, json-enc" hx-boost="true">
-@Props.Body
-</body>
-</html>
+<AppHeadComponent Data="@(new AppHeadComponent.Input(Data.Title))" />
 
+<body hx-ext="preload, json-enc" hx-boost="true">
+    @Data.Body
+</body>
+
+</html>
 
 
 @code {
 
-    public record Model(RenderFragment Body, string Title) : BaseComponentProps;
+    public record Input(RenderFragment Body, string Title);
 
 }

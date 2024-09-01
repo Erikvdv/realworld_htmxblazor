@@ -26,14 +26,12 @@ public class ArticleRoutes : CarterModule
     private static async Task<RazorComponentResult> GetArticle(HttpContext context, string slug,
         IConduitApiClient client)
     {
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-        User? user = null;
-
-        if (isAuthenticated) user = AuthenticationHelper.GetUser(context);
+        
+        var user = context.GetUser();
 
         var article = await client.GetArticleAsync(slug, user?.Token);
-
-        var bodyFragment = new Article().GetRenderFragment(new Article.Model(isAuthenticated, article, user));
+        
+        var bodyFragment = new ArticleComponent().GetFragment(new ArticleComponent.Input(user != null, article, user));
         
         return RenderHelper.RenderMainLayout(context, bodyFragment, "Home - Conduit", user);
     }
@@ -41,10 +39,7 @@ public class ArticleRoutes : CarterModule
     private static async Task<IResult> DeleteArticle(HttpContext context, string slug,
         IConduitApiClient client)
     {
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-        User? user = null;
-
-        if (isAuthenticated) user = AuthenticationHelper.GetUser(context);
+        var user = context.GetUser();
 
         await client.DeleteArticleAsync(slug, user?.Token);
 
@@ -58,8 +53,8 @@ public class ArticleRoutes : CarterModule
     private static async Task<IResult> FavoriteArticle(HttpContext context, string slug,
         IConduitApiClient client)
     {
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-        if (!isAuthenticated)
+        var user = context.GetUser();
+        if (user == null)
         {
             context.Response.Htmx(h =>
             {
@@ -67,23 +62,21 @@ public class ArticleRoutes : CarterModule
             });
             return Results.Unauthorized();
         }
-
-        var user = AuthenticationHelper.GetUser(context);
+        
         var article = await client.FavoriteArticleAsync(slug, user.Token);
         
-        return new Article().GetRazorComponentResult(new Article.Model(isAuthenticated, article, user));
+        return new ArticleComponent().GetResult(new ArticleComponent.Input(true, article, user));
     }
     
     private static async Task<IResult> UnFavoriteArticle(HttpContext context, string slug,
         IConduitApiClient client)
     {
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-        if (!isAuthenticated) return Results.Forbid();
+        var user = context.GetUser();
 
-        var user = AuthenticationHelper.GetUser(context);
+        if (user == null) return Results.Forbid();
         var article = await client.UnfavoriteArticleAsync(slug, user.Token);
 
-        return new Article().GetRazorComponentResult(new Article.Model(isAuthenticated, article, user));
+        return new ArticleComponent().GetResult(new ArticleComponent.Input(true, article, user));
     }
 
 
@@ -91,47 +84,46 @@ public class ArticleRoutes : CarterModule
     private static async Task<IResult> GetComments(HttpContext context, string slug,
         IConduitApiClient client)
     {
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-        if (!isAuthenticated) return Results.Forbid();
+        var user = context.GetUser();
+        if (user == null) return Results.Forbid();
         
-        var user = AuthenticationHelper.GetUser(context);
-        var comments = await client.GetArticleCommentsAsync(slug, user.Token);
 
-        return new Comments().GetRazorComponentResult(new Comments.Model(slug,comments, user));
+        var comments = await client.GetArticleCommentsAsync(slug, user.Token);
+        
+    
+        return new CommentsComponent().GetResult(new CommentsComponent.Input(slug,comments, user));
     }
     
     public record NewComment(string Comment);
     private static async Task<IResult> AddComment(NewComment newComment, HttpContext context, string slug,
         IConduitApiClient client)
     {
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-        if (!isAuthenticated) return Results.Forbid();
+        var user = context.GetUser();
+        if (user == null) return Results.Forbid();
         
-        var user = AuthenticationHelper.GetUser(context);
         var comment = await client.AddCommentAsync(slug, newComment.Comment, user.Token);
         var comments = await client.GetArticleCommentsAsync(slug, user.Token);
 
-        return new Comments().GetRazorComponentResult(new Comments.Model(slug,comments, user));
+        return new CommentsComponent().GetResult(new CommentsComponent.Input(slug,comments, user));
     }
     
     private static async Task<IResult> DeleteComment(int commentId, HttpContext context, string slug,
         IConduitApiClient client)
     {
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-        if (!isAuthenticated) return Results.Forbid();
+        var user = context.GetUser();
+        if (user == null) return Results.Forbid();
         
-        var user = AuthenticationHelper.GetUser(context);
         await client.DeleteCommentAsync(slug, commentId, user.Token);
         var comments = await client.GetArticleCommentsAsync(slug, user.Token);
 
-        return new Comments().GetRazorComponentResult(new Comments.Model(slug, comments, user));
+        return new CommentsComponent().GetResult(new CommentsComponent.Input(slug, comments, user));
     }
     
     private static async Task<IResult> FollowAuthor(HttpContext context, string authorUsername,
         IConduitApiClient client)
     {
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-        if (!isAuthenticated)
+        var user = context.GetUser();
+        if (user == null)
         {
             context.Response.Htmx(h =>
             {
@@ -140,26 +132,24 @@ public class ArticleRoutes : CarterModule
             return Results.Unauthorized();
         }
 
-        
-        var user = AuthenticationHelper.GetUser(context);
+
         var profile = await client.FollowProfileAsync(authorUsername, user.Token);
-        
-        return new ArticleAuthor().GetRazorComponentResult(new ArticleAuthor.Model(profile));
+        return new ArticleAuthorComponent().GetResult(new ArticleAuthorComponent.Input(profile));
     }
     
     private static async Task<IResult> UnfollowAuthor(HttpContext context, string authorUsername,
         IConduitApiClient client)
     {
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-        if (!isAuthenticated)
+        var user = context.GetUser();
+        if (user == null)
         {
             return Results.Unauthorized();
         }
-
         
-        var user = AuthenticationHelper.GetUser(context);
         var profile = await client.UnFollowProfileAsync(authorUsername, user.Token);
         
-        return new ArticleAuthor().GetRazorComponentResult(new ArticleAuthor.Model(profile));
+        return new ArticleAuthorComponent().GetResult(new ArticleAuthorComponent.Input(profile));
     }
+
+
 }

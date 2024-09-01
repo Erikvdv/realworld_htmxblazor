@@ -25,9 +25,14 @@ public static class AuthenticationHelper
     {
         await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     }
-
-    public static User GetUser(HttpContext context)
+    
+    
+    public static User? GetUser(this HttpContext context)
     {
+        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
+
+        if (!isAuthenticated) return null;
+
         var token = context.User.Claims.FirstOrDefault(c => c.Type == "Token")?.Value;
         var image = context.User.Claims.FirstOrDefault(c => c.Type == "Image")?.Value;
         var username = context.User.Claims.FirstOrDefault(c => c.Type == "Username")?.Value;

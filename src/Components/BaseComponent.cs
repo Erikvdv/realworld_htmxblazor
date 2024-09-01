@@ -3,24 +3,23 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace RealworldBlazorHtmx.App.Components;
 
-public abstract record BaseComponentProps;
 
-public abstract class BaseComponent<T> : ComponentBase where T : BaseComponentProps
+public abstract class BaseComponent<T> : ComponentBase where T : notnull
 {
-    [Parameter] public T Props { get; set; } = default!;
+    [Parameter] public T Data { get; set; } = default!;
 
-    public RazorComponentResult GetRazorComponentResult(T props)
+    public RazorComponentResult GetResult(T props)
     {
-        var parameters = new Dictionary<string, object> {{nameof(BaseComponent<BaseComponentProps>.Props), props}};
+        var parameters = new Dictionary<string, object> {{nameof(Data), props}};
         return new RazorComponentResult(GetType(), parameters!);
     }
 
-    public RenderFragment GetRenderFragment(T props)
+    public RenderFragment GetFragment(T props)
     {
         var component = new RenderFragment(builder =>
         {
             builder.OpenComponent(0, GetType());
-            builder.AddAttribute(1, nameof(BaseComponent<BaseComponentProps>.Props), props);
+            builder.AddAttribute(1, nameof(Data), props);
             builder.CloseComponent();
         });
         return component;

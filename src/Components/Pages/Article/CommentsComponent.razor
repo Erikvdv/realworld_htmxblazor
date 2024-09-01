@@ -1,16 +1,17 @@
 @using RealworldBlazorHtmx.App.ServiceClient
-@inherits BaseComponent<Comments.Model>
+@inherits BaseComponent<CommentsComponent.Input>
 
-<form class="card comment-form" hx-post="/article/@Props.ArticleSlug/comments" hx-include="[name='comment']" hx-target="#commentlist">
+
+<form class="card comment-form" hx-post="/article/@Data.ArticleSlug/comments" hx-include="[name='comment']" hx-target="#commentlist">
     <div class="card-block">
         <textarea class="form-control" placeholder="Write a comment..." rows="3" name="comment"></textarea>
     </div>
     <div class="card-footer">
-        <img src="@Props.User.Image" class="comment-author-img"/>
+        <img src="@Data.User.Image" class="comment-author-img"/>
         <button class="btn btn-sm btn-primary">Post Comment</button>
     </div>
 </form>
-@foreach (var comment in Props.Comments)
+@foreach (var comment in Data.Comments)
 {
     <div class="card">
         <div class="card-block">
@@ -25,10 +26,10 @@
             &nbsp;
             <a href="/profile/?author=@comment.Author.Username" class="comment-author">@comment.Author.Username</a>
             <span class="date-posted">@comment.UpdatedAt</span>
-            @if (comment.Author.Username == Props.User.Username)
+            @if (comment.Author.Username == Data.User.Username)
             {
                 <span class="mod-options">
-                    <i class="ion-trash-a" hx-delete="/article/@Props.ArticleSlug/comments/@comment.Id" hx-target="#commentlist"></i>
+                    <i class="ion-trash-a" hx-delete="/article/@Data.ArticleSlug/comments/@comment.Id" hx-target="#commentlist"></i>
                 </span>
             }
             
@@ -40,6 +41,6 @@
 
 @code {
 
-    public record Model(string ArticleSlug, List<Comment> Comments, User User) : BaseComponentProps;
+    public record Input(string ArticleSlug, List<Comment> Comments, User User);
 
 }

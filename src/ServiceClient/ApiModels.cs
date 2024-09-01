@@ -36,7 +36,7 @@ public record NewUser(string Username, string Email, string Password);
 public class Profile
 {
     public required string Username { get; set; }
-    public required string Bio { get; set; }
+    public string? Bio { get; set; }
     public required string Image { get; set; }
     public bool Following { get; set; }
 }
@@ -93,7 +93,7 @@ public class Article
 
     public required string Description { get; set; }
 
-    public required string Body { get; set; }
+    public string? Body { get; set; }
 
     public required string[] TagList { get; set; }
 

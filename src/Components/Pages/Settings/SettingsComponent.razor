@@ -1,5 +1,5 @@
 @using RealworldBlazorHtmx.App.ServiceClient
-@inherits BaseComponent<Settings.Model>
+@inherits BaseComponent<SettingsComponent.Input>
 
 <div class="settings-page">
     <div class="container page">
@@ -11,10 +11,10 @@
                 <form>
                     <fieldset>
                         <fieldset class="form-group">
-                            <input class="form-control" type="text" placeholder="URL of profile picture" value="@Props.User.Image"/>
+                            <input class="form-control" type="text" placeholder="URL of profile picture" value="@Data.User.Image"/>
                         </fieldset>
                         <fieldset class="form-group">
-                            <input class="form-control form-control-lg" type="text" placeholder="Your Name" value="@Props.User.Username"/>
+                            <input class="form-control form-control-lg" type="text" placeholder="Your Name" value="@Data.User.Username"/>
                         </fieldset>
                         <fieldset class="form-group">
                             <textarea
@@ -44,6 +44,6 @@
 
 @code {
 
-    public record Model(User User) : BaseComponentProps;
+    public record Input(User User);
 
 }

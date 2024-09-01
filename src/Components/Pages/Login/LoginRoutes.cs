@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Carter;
 using Htmx;
 using MiniValidation;
@@ -14,14 +15,26 @@ public class LoginRoutes : CarterModule
         path.MapGet("/", GetLogin);
         path.MapPost("/", SubmitLogin);
     }
+    
+    private record LoginFormInput(string Email, string Password) : IValidatableObject
+    {
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (string.IsNullOrEmpty(Email)) 
+                yield return new ValidationResult("can't be blank.", new[] {nameof(Email)});
+            if (string.IsNullOrEmpty(Password))
+                yield return new ValidationResult("can't be blank.", new[] {nameof(Password)});
+        }
+    }
 
     private static IResult GetLogin(HttpContext context)
     {
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-        if (isAuthenticated)
+        var user = context.GetUser();
+
+        if (user is not null)
             return Results.Redirect("/");
 
-        var bodyFragment = new Login().GetRenderFragment(new Login.Model());
+        var bodyFragment = new LoginComponent().GetFragment(new LoginComponent.Input());
         return RenderHelper.RenderMainLayout(context, bodyFragment, "Sign-in - Conduit");
     }
 
@@ -45,7 +58,7 @@ public class LoginRoutes : CarterModule
         }
         catch (ApiException apiException)
         {
-            return new LoginForm().GetRazorComponentResult(new LoginForm.Model(apiException.ErrorList));
+            return new LoginFormComponent().GetResult(new LoginFormComponent.Input(apiException.ErrorList));
         }
     }
 }

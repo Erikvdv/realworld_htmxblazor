@@ -1,7 +1,7 @@
 @using RealworldBlazorHtmx.App.Components.Shared
-@inherits BaseComponent<RegisterForm.Model>
+@inherits BaseComponent<RegisterFormComponent.Input>
 
-<ListErrors ErrorList="Props?.ErrorList"/>
+<ListErrors ErrorList="Data.ErrorList"/>
 
 <form hx-post="/register" hx-include="[username='Username'],[name='Email'],[name='Password']">
     <fieldset class="form-group">
@@ -18,7 +18,7 @@
 
 @code {
 
-    public record Model(Dictionary<string, string[]>? ErrorList) : BaseComponentProps;
+    public record Input(Dictionary<string, string[]>? ErrorList);
 
 
 }

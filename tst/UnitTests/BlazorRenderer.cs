@@ -41,11 +41,11 @@ internal class BlazorRenderer : IAsyncDisposable
         return RenderComponent<T>(ParameterView.FromDictionary(dictionary));
     }
 
-    public Task<string> RenderComponent<T>(BaseComponentProps model) where T : IComponent
+    public Task<string> RenderComponent<T>(object model) where T : IComponent
     {
         var dictionary = new Dictionary<string, object>
         {
-            {nameof(BaseComponent<BaseComponentProps>.Props), model}
+            {nameof(BaseComponent<T>.Data), model}
         };
 
         return RenderComponent<T>(ParameterView.FromDictionary(dictionary));
