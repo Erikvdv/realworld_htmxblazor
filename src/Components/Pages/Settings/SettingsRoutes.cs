@@ -16,12 +16,12 @@ public class SettingsRoutes : CarterModule
 
     private static Task<IResult> GetSettings(HttpContext context, IConduitApiClient client)
     {
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-
-        if (!isAuthenticated) return Task.FromResult(Results.Redirect("/signin"));
-
-        var user = AuthenticationHelper.GetUser(context);
-        var bodyFragment = new Settings().GetRenderFragment(new Settings.Model(user));
+        var user = context.GetUser();
+        
+        if (user is null) 
+            return Task.FromResult(Results.Redirect("/signin"));
+        
+        var bodyFragment = new SettingsComponent().GetFragment(new SettingsComponent.Input(user));
         return Task.FromResult<IResult>(RenderHelper.RenderMainLayout(context, bodyFragment, "Home - Conduit", user));
     }
     

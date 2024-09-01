@@ -13,11 +13,11 @@ public static class RenderHelper
     {
         var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
         var layoutFragment = new MainLayout()
-            .GetRenderFragment(new MainLayout.Model(bodyFragment, isAuthenticated, context.Request.Path, user));
+            .GetFragment(new MainLayout.Input(bodyFragment, isAuthenticated, context.Request.Path, user));
 
 
-        var props = new App.Model(layoutFragment, pageTitle);
+        var props = new App.Input(layoutFragment, pageTitle);
 
-        return new App().GetRazorComponentResult(props);
+        return new App().GetResult(props);
     }
 }

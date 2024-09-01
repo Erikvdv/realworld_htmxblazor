@@ -1,19 +1,19 @@
-@inherits BaseComponent<Articles.Model>
+@inherits BaseComponent<ArticlesComponent.Input>
 <div>
     <div class="articles-toggle" id="feed-toggle">
         <ul class="nav nav-pills outline-active">
-            @if (Props.Filter.Author is not null || Props.Filter.Favorited is not null)
+            @if (Data.Filter.Author is not null || Data.Filter.Favorited is not null)
             {
                 <li class="nav-item">
-                    <a class="nav-link @NavItemClassActive("myArticles")" href="/profile/?author=@Props.Filter.Favorited">My Articles</a>
+                    <a class="nav-link @NavItemClassActive("myArticles")" href="/profile/?author=@Data.Filter.Favorited">My Articles</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @NavItemClassActive("favoritedArticles")" href="/profile/?favorited=@Props.Filter.Author">Favorited Articles</a>
+                    <a class="nav-link @NavItemClassActive("favoritedArticles")" href="/profile/?favorited=@Data.Filter.Author">Favorited Articles</a>
                 </li>
             }
             else
             {
-                @if (Props is {IsAuthenticated: true})
+                @if (Data is {IsAuthenticated: true})
                 {
                     <li class="nav-item">
                         <a class="nav-link @NavItemClassActive("myFeed")" href="/?page=1&myfeed=true">Your Feed</a>
@@ -29,10 +29,10 @@
                     </li>
                 }
 
-                @if (Props.Filter.Tag != null)
+                @if (Data.Filter.Tag != null)
                 {
                     <li class="nav-item">
-                        <a class="nav-link @NavItemClassActive("tag")">#@Props.Filter.Tag</a>
+                        <a class="nav-link @NavItemClassActive("tag")">#@Data.Filter.Tag</a>
                     </li>
                 }
             }
@@ -40,7 +40,7 @@
         </ul>
     </div>
     <div id="articles"
-         hx-get="/articles/list@(Props.Filter.ToQueryString())"
+         hx-get="/articles/list@(Data.Filter.ToQueryString())"
          hx-trigger="load">
         Loading articles...
     </div>
@@ -50,17 +50,17 @@
 
 @code {
 
-    public record Model(bool IsAuthenticated, ArticlesFilter Filter) : BaseComponentProps;
+    public record Input(bool IsAuthenticated, ArticlesFilter Filter);
 
     private string NavItemClassActive(string item)
     {
         return item switch
         {
-            "myFeed" => Props.Filter.MyFeed == true ? "active" : "",
-            "tag" => Props.Filter.Tag != null ? "active" : "",
-            "global" => Props.Filter.MyFeed != true && Props.Filter.Tag == null ? "active" : "",
-            "myArticles" => Props.Filter.Author is not null ? "active" : "",
-            "favoritedArticles" => Props.Filter.Favorited is not null ? "active" : "",
+            "myFeed" => Data.Filter.MyFeed == true ? "active" : "",
+            "tag" => Data.Filter.Tag != null ? "active" : "",
+            "global" => Data.Filter.MyFeed != true && Data.Filter.Tag == null ? "active" : "",
+            "myArticles" => Data.Filter.Author is not null ? "active" : "",
+            "favoritedArticles" => Data.Filter.Favorited is not null ? "active" : "",
             _ => ""
         };
     }

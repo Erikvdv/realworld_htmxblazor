@@ -1,7 +1,7 @@
 @using RealworldBlazorHtmx.App.ServiceClient
-@inherits BaseComponent<AppHeader.Model>
+@inherits BaseComponent<AppHeaderComponent.Input>
 
-@if (!Props.IsAuthenticated)
+@if (!Data.IsAuthenticated)
 {
     <nav class="navbar navbar-light">
         <div class="container">
@@ -36,9 +36,9 @@ else
                     <a class="nav-link @IsActivePath("/settings")" href="/settings"> <i class="ion-gear-a"></i>Settings</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/profile/?author=@Props.User?.Username">
-                        <img src="@Props.User?.Image" class="user-pic"/>
-                        @Props.User?.Username
+                    <a class="nav-link" href="/profile/?author=@Data.User?.Username">
+                        <img src="@Data.User?.Image" class="user-pic"/>
+                        @Data.User?.Username
                     </a>
                 </li>
             </ul>
@@ -48,11 +48,11 @@ else
 
 @code {
 
-    public record Model(bool IsAuthenticated, string ActivePath, User? User) : BaseComponentProps;
+    public record Input(bool IsAuthenticated, string ActivePath, User? User);
 
     private string IsActivePath(string path)
     {
-        return Props.ActivePath == path ? "active" : "";
+        return Data.ActivePath == path ? "active" : "";
     }
 
 }

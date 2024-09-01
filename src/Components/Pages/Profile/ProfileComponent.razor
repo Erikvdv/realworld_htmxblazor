@@ -1,16 +1,16 @@
-@inherits BaseComponent<Profile.Model>
+@inherits BaseComponent<ProfileComponent.Input>
 
 <div class="profile-page">
     <div class="user-info">
         <div class="container">
             <div class="row">
                 <div class="col-xs-12 col-md-10 offset-md-1">
-                    <img src="@Props.Profile.Image" class="user-img"/>
-                    <h4>@Props.Profile.Username</h4>
+                    <img src="@Data.Profile.Image" class="user-img"/>
+                    <h4>@Data.Profile.Username</h4>
                     <p>
-                        @Props.Profile.Bio
+                        @Data.Profile.Bio
                     </p>
-                    @if (Props is {IsSelf: true})
+                    @if (Data is {IsSelf: true})
                     {
                         <a href="/settings">
                             <button class="btn btn-sm btn-outline-secondary action-btn">
@@ -21,7 +21,7 @@
                     }
                     else
                     {
-                    <ProfileFollowing Props="@(new ProfileFollowing.Model(Props.Profile))"></ProfileFollowing>
+                    <ProfileFollowingComponent Data="@(new ProfileFollowingComponent.Input(Data.Profile))"></ProfileFollowingComponent>
                     }
                 </div>
             </div>
@@ -31,7 +31,7 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12 col-md-10 offset-md-1">
-                <Articles Props="new Articles.Model(Props.IsAuthenticated, Props.Filter)"></Articles>
+                <ArticlesComponent Data="new ArticlesComponent.Input(Data.IsAuthenticated, Data.Filter)"></ArticlesComponent>
             </div>
         </div>
     </div>
@@ -39,6 +39,6 @@
 
 @code {
 
-    public record Model(bool IsAuthenticated, ServiceClient.Profile Profile, ArticlesFilter Filter, bool IsSelf) : BaseComponentProps;
+    public record Input(bool IsAuthenticated, ServiceClient.Profile Profile, ArticlesFilter Filter, bool IsSelf);
 
 }

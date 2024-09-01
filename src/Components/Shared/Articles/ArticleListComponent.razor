@@ -1,0 +1,27 @@
+@inherits BaseComponent<ArticleListComponent.Input>
+
+@if (Data.ArticlesList.ArticlesCount == 0)
+{
+    <div>No articles are here... yet.</div>
+}
+else
+{
+    @foreach (var article in Data.ArticlesList.Articles)
+    {
+        <ArticleSummaryComponent Article=article/>
+    }
+
+    <ArticleListPaginationComponent Data="@(new ArticleListPaginationComponent.Input(Data.Filter.Page, GetTotalPages(), Data.Filter))"/>
+}
+
+
+@code {
+
+    public record Input(ServiceClient.ArticleList ArticlesList, ArticlesFilter Filter);
+
+    private int GetTotalPages()
+    {
+        return (int) Math.Ceiling((double) Data.ArticlesList.ArticlesCount / 10);
+    }
+
+}

@@ -21,17 +21,14 @@ public class ProfileRoutes : CarterModule
     private static async Task<RazorComponentResult> GetProfile(HttpContext context, [AsParameters] ArticlesFilter filter,
         IConduitApiClient client)
     {
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-
-        User? user = null;
-        if (isAuthenticated) user = AuthenticationHelper.GetUser(context);
+        var user = context.GetUser();
 
         var profileName = filter.Author ?? filter.Favorited;
 
         var profile = await client.GetProfileAsync(profileName, user?.Token);
       
         var bodyFragment =
-            new Profile().GetRenderFragment(new Profile.Model(isAuthenticated, profile, filter,
+            new ProfileComponent().GetFragment(new ProfileComponent.Input(user is not null, profile, filter,
                 profileName == user?.Username));
 
         return RenderHelper.RenderMainLayout(context, bodyFragment, "Home - Conduit", user);
@@ -41,36 +38,29 @@ public class ProfileRoutes : CarterModule
     private static async Task<IResult> FollowProfile(HttpContext context, string profileName,
         IConduitApiClient client)
     {
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-        if (!isAuthenticated)
+        var user = context.GetUser();
+
+        if (user is null)
         {
-            context.Response.Htmx(h =>
-            {
-                h.Redirect("/login");
-            });
+            context.Response.Htmx(h => h.Redirect("/login"));
             return Results.Unauthorized();
         }
-
         
-        var user = AuthenticationHelper.GetUser(context);
         var profile = await client.FollowProfileAsync(profileName, user.Token);
         
-        return new ProfileFollowing().GetRazorComponentResult(new ProfileFollowing.Model(profile));
+        return new ProfileFollowingComponent().GetResult(new ProfileFollowingComponent.Input(profile));
     }
     
     private static async Task<IResult> UnfollowProfile(HttpContext context, string profileName,
         IConduitApiClient client)
     {
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-        if (!isAuthenticated)
-        {
-            return Results.Unauthorized();
-        }
+        var user = context.GetUser();
 
+        if (user is null) 
+            return Results.Unauthorized();
         
-        var user = AuthenticationHelper.GetUser(context);
         var profile = await client.UnFollowProfileAsync(profileName, user.Token);
         
-        return new ProfileFollowing().GetRazorComponentResult(new ProfileFollowing.Model(profile));
+        return new ProfileFollowingComponent().GetResult(new ProfileFollowingComponent.Input(profile));
     }
 }

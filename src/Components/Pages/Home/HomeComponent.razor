@@ -1,7 +1,7 @@
-@inherits BaseComponent<Home.Model>
+@inherits BaseComponent<HomeComponent.Input>
 
 <div class="home-page">
-    @if (!Props.IsAuthenticated)
+    @if (!Data.IsAuthenticated)
     {
         <div class="banner">
             <div class="container">
@@ -14,7 +14,7 @@
     <div class="container page">
         <div class="row">
             <div class="col-md-9">
-                <Articles Props="new Articles.Model(Props.IsAuthenticated, Props.Filter)"></Articles>
+                <ArticlesComponent Data="new ArticlesComponent.Input(Data.IsAuthenticated, Data.Filter)"></ArticlesComponent>
             </div>
 
             <div class="col-md-3">
@@ -26,6 +26,6 @@
 
 @code {
 
-    public record Model(bool IsAuthenticated, ArticlesFilter Filter) : BaseComponentProps;
+    public record Input(bool IsAuthenticated, ArticlesFilter Filter);
 
 }

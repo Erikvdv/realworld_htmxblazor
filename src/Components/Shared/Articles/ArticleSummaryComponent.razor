@@ -1,0 +1,43 @@
+@using RealworldBlazorHtmx.App.ServiceClient
+
+@inherits BaseComponent<ArticleSummaryComponent.Input>
+<div class="article-preview">
+    <div class="article-meta">
+        <NavLink href=@($"/profile/?author={Data.Article.Author.Username}")>
+            <img src="@Data.Article.Author.Image" alt="@Data.Article.Author.Username"/>
+        </NavLink>
+        <div class="info">
+            <a class="author" href="/profile/?author=@Data.Article.Author.Username">
+                @Data.Article.Author.Username
+            </a>
+            <span class="date">
+                @Data.Article.CreatedAt.ToString("MMMM d, yyyy")
+            </span>
+        </div>
+        <div class="pull-xs-right">
+            <button class="btn btn-sm @(Data.Article.Favorited ? "btn-primary" : "btn-outline-primary")"
+                    onclick="(() =>
+                ToggleFavorite(@Data.Article))">
+                <i class="ion-heart"></i> @Data.Article.FavoritesCount
+            </button>
+        </div>
+    </div>
+    <a href=@($"/article/{Data.Article.Slug}") preload class="preview-link">
+        <h1>@Data.Article.Title</h1>
+        <p>@Data.Article.Description</p>
+        <span>Read more...</span>
+        <ul class="tag-list">
+            @foreach (var tag in Data.Article.TagList)
+            {
+                <li class="tag-default tag-pill tag-outline">@tag</li>
+            }
+        </ul>
+    </a>
+</div>
+
+
+@code {
+
+    public record Input(Article Article);
+
+}

@@ -19,6 +19,12 @@ public class EditorRoutes : CarterModule
         path.MapPost("/article", CreateArticle);
     }
 
+    private record CreateArticleRequest(string Title, string Description, string Body, string[] Tags, string Slug);
+
+    private record AddTagRequest(string NewTag, List<string>? Tags);
+
+    private record DeleteTagRequest(List<string>? Tags);
+
     private static IResult GetEditor(HttpContext context)
     {
         var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
@@ -26,23 +32,21 @@ public class EditorRoutes : CarterModule
             return Results.Redirect("/");
         var user = AuthenticationHelper.GetUser(context);
         var errors = new Dictionary<string, string[]>();
-        var bodyFragment = new Editor().GetRenderFragment(new Editor.Model(new UpdateArticle("", "", "", []),null,errors));
-        return RenderHelper.RenderMainLayout(context, bodyFragment, "Editor - Conduit", user);
+        var bodyFragment = new EditorComponent().GetFragment(new EditorComponent.Input(new UpdateArticle("", "", "", []),null,errors));
+        return RenderHelper.RenderMainLayout(context, bodyFragment, "EditorComponent - Conduit", user);
     }
     
     private static async Task<IResult> GetEditorForSlug(HttpContext context, string slug, IConduitApiClient client)
     {
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-        if (!isAuthenticated)
+        var user = context.GetUser();
+        if (user == null)
             return Results.Redirect("/");
         
-        var user = AuthenticationHelper.GetUser(context);
         var article = await client.GetArticleAsync(slug, user.Token);
         var errors = new Dictionary<string, string[]>();
-        var bodyFragment = new Editor().GetRenderFragment(new Editor.Model(new UpdateArticle(article.Title, article.Description, article.Body, article.TagList.ToList()),slug,errors));
-        return RenderHelper.RenderMainLayout(context, bodyFragment, "Editor - Conduit", user);
+        var bodyFragment = new EditorComponent().GetFragment(new EditorComponent.Input(new UpdateArticle(article.Title, article.Description, article.Body, article.TagList.ToList()),slug,errors));
+        return RenderHelper.RenderMainLayout(context, bodyFragment, "EditorComponent - Conduit", user);
     }
-
 
     
     private static Task<RazorComponentResult> AddTag(HttpContext context, AddTagRequest request,
@@ -54,7 +58,7 @@ public class EditorRoutes : CarterModule
             .Distinct()
             .ToList();
         
-        return Task.FromResult(new EditorTags().GetRazorComponentResult(new EditorTags.Model(newTags)));
+        return Task.FromResult(new EditorTagsComponent().GetResult(new EditorTagsComponent.Input(newTags)));
     }
     
     
@@ -67,59 +71,46 @@ public class EditorRoutes : CarterModule
             .ToList();
         newTags.Remove(tag);
         
-        return Task.FromResult(new EditorTags().GetRazorComponentResult(new EditorTags.Model(newTags)));
+        return Task.FromResult(new EditorTagsComponent().GetResult(new EditorTagsComponent.Input(newTags)));
     }
 
     
     private static async Task<IResult> CreateArticle(CreateArticleRequest request, IConduitApiClient client,
         HttpContext context)
     {
-        Dictionary<string, string[]> errors = new();
-        
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-        if (!isAuthenticated)
+        var user = context.GetUser();
+        if (user == null)
         {
-            context.Response.Htmx(h =>
-            {
-                h.Redirect("/login");
-            });
+            context.Response.Htmx(h => h.Redirect("/login"));
             return Results.Unauthorized();
         }
-    
+
         try
         {
-            var user = AuthenticationHelper.GetUser(context);
-            ServiceClient.Article article;
-            if (string.IsNullOrEmpty(request.Slug))
-            {
-                var newArticle = new NewArticle
-                {
-                    Body = request.Body, 
-                    Description = request.Description, 
-                    Title = request.Title,
-                    TagList = request.Tags?.Where(x => !string.IsNullOrEmpty(x)).Distinct().ToHashSet() ?? []
-                };
-                 article = await client.CreateArticleAsync(newArticle, user.Token);
-            }
-            else
-            {
-                 article = await client.UpdateArticleAsync(
-                    request.Slug,
-                    new UpdateArticle(request.Title, request.Description, request.Body,
-                        request.Tags?.Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList() ?? []),
-                    user.Token);
-            }
-            
-            context.Response.Htmx(h =>
-            {
-                h.Redirect($"/article/{article.Slug}");
-            });
+            var article = string.IsNullOrEmpty(request.Slug)
+                ? await client.CreateArticleAsync(
+                    new NewArticle
+                    {
+                        Body = request.Body,
+                        Description = request.Description,
+                        Title = request.Title,
+                        TagList = request.Tags?.Where(x => !string.IsNullOrEmpty(x)).Distinct().ToHashSet() ?? []
+                    }, user.Token
+                )
+                : await client.UpdateArticleAsync(
+                    request.Slug, new UpdateArticle(
+                        request.Title, request.Description, request.Body,
+                        request.Tags?.Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList() ?? new List<string>()
+                    ), user.Token
+                );
+
+            context.Response.Htmx(h => h.Redirect($"/article/{article.Slug}"));
             return Results.Ok();
         }
         catch (ApiException apiException)
         {
-            var article = new UpdateArticle(request.Title, request.Description, request.Body, request.Tags?.Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList() ?? []);
-            return new Editor().GetRazorComponentResult(new Editor.Model(article, null, apiException.ErrorList));
+            var article = new UpdateArticle(request.Title, request.Description, request.Body, request.Tags.Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList());
+            return new EditorComponent().GetResult(new EditorComponent.Input(article, null, apiException.ErrorList));
         }
     }
 }

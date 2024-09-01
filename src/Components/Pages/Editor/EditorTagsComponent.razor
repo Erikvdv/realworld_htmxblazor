@@ -1,4 +1,5 @@
-@inherits BaseComponent<EditorTags.Model>
+@inherits BaseComponent<EditorTagsComponent.Input>
+
 <fieldset class="form-group" hx-trigger="keyup[keyCode==13]"
           hx-post="/editor/tags" hx-params="newTag,tags" id="tagsForm" hx-swap="outerHTML"
 >
@@ -10,7 +11,7 @@
     <div class="tag-list">
         <input type="hidden" name="tags" value=""/>
         <input type="hidden" name="tags" value=""/>
-        @foreach (var tag in Props.Tags)
+        @foreach (var tag in Data.Tags)
         {
             <span class="tag-default tag-pill">
                 <i class="ion-close-round" hx-delete="/editor/tags/@tag" hx-params="tags" hx-target="#tagsForm"></i>
@@ -23,5 +24,5 @@
 </fieldset>
 
 @code {
-    public record Model(List<string> Tags) : BaseComponentProps;
+    public record Input(List<string> Tags);
 }

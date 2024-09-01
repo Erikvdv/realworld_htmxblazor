@@ -15,15 +15,19 @@ public class RegisterRoutes : CarterModule
         path.MapGet("/", GetRegister);
         path.MapPost("/", SubmitRegisterForm);
     }
-
+    
+    
     private static IResult GetRegister(HttpContext context)
     {
-        var isAuthenticated = context.User.Identity?.IsAuthenticated ?? false;
-        if (isAuthenticated)
+        var user = context.GetUser();
+        if (user != null)
             return Results.Redirect("/");
-        var bodyFragment = new Register().GetRenderFragment(new Register.Model());
-        return RenderHelper.RenderMainLayout(context, bodyFragment, "Register - Conduit");
+        
+        var bodyFragment = new RegisterComponent().GetFragment(new RegisterComponent.Input());
+        return RenderHelper.RenderMainLayout(context, bodyFragment, "RegisterComponent - Conduit");
     }
+    
+    private record RegisterFormInput(string Email, string Username, string Password);
 
     private static async Task<IResult> SubmitRegisterForm(RegisterFormInput input,
         IConduitApiClient client, HttpContext context)
@@ -43,7 +47,7 @@ public class RegisterRoutes : CarterModule
         }
         catch (ApiException apiException)
         {
-            return new RegisterForm().GetRazorComponentResult(new RegisterForm.Model(apiException.ErrorList));
+            return new RegisterFormComponent().GetResult(new RegisterFormComponent.Input(apiException.ErrorList));
         }
     }
 }

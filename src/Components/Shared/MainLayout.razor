@@ -1,14 +1,14 @@
 ﻿@using RealworldBlazorHtmx.App.ServiceClient
-@inherits BaseComponent<MainLayout.Model>
+@inherits BaseComponent<MainLayout.Input>
 
-<AppHeader Props="@(new AppHeader.Model(Props.IsAuthenticated, Props.ActivePath, Props.User))"></AppHeader>
+<AppHeaderComponent Data="@(new AppHeaderComponent.Input(Data.IsAuthenticated, Data.ActivePath, Data.User))"></AppHeaderComponent>
 
-@Props.Body
+@Data.Body
 
-<AppFooter/>
+<AppFooterComponent/>
 
 @code {
 
-    public record Model(RenderFragment Body, bool IsAuthenticated, string ActivePath, User? User = null) : BaseComponentProps;
+    public record Input(RenderFragment Body, bool IsAuthenticated, string ActivePath, User? User = null);
 
 }
