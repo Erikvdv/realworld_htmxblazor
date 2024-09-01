@@ -3,12 +3,13 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<AppHeadComponent Data="@(new AppHeadComponent.Input(Data.Title))"/>
-<body hx-ext="preload, json-enc" hx-boost="true">
-@Data.Body
-</body>
-</html>
+<AppHeadComponent Data="@(new AppHeadComponent.Input(Data.Title))" />
 
+<body hx-ext="preload, json-enc" hx-boost="true">
+    @Data.Body
+</body>
+
+</html>
 
 
 @code {

@@ -5,15 +5,17 @@
             @if (Data.Filter.Author is not null || Data.Filter.Favorited is not null)
             {
                 <li class="nav-item">
-                    <a class="nav-link @NavItemClassActive("myArticles")" href="/profile/?author=@Data.Filter.Favorited">My Articles</a>
+                    <a class="nav-link @NavItemClassActive("myArticles")" href="/profile/?author=@Data.Filter.Favorited">My
+                        Articles</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @NavItemClassActive("favoritedArticles")" href="/profile/?favorited=@Data.Filter.Author">Favorited Articles</a>
+                    <a class="nav-link @NavItemClassActive("favoritedArticles")"
+                        href="/profile/?favorited=@Data.Filter.Author">Favorited Articles</a>
                 </li>
             }
             else
             {
-                @if (Data is {IsAuthenticated: true})
+                @if (Data is { IsAuthenticated: true })
                 {
                     <li class="nav-item">
                         <a class="nav-link @NavItemClassActive("myFeed")" href="/?page=1&myfeed=true">Your Feed</a>
@@ -39,9 +41,7 @@
 
         </ul>
     </div>
-    <div id="articles"
-         hx-get="/articles/list@(Data.Filter.ToQueryString())"
-         hx-trigger="load">
+    <div id="articles" hx-get="/articles/list@(Data.Filter.ToQueryString())" hx-trigger="load">
         Loading articles...
     </div>
 
